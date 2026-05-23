@@ -5,44 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cornerstone Insurance Firm</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Cornerstone Insurance Firm</h1>
-        <p>Your Trusted Insurance Partner</p>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved purple-glow"></i>
+                <h1>CORNERSTONE</h1>
+            </div>
+            <p class="subtitle">Your Trusted Insurance Partner</p>
+        </div>
     </header>
+    
     <nav>
         <ul>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#about"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+            <li><a href="#services"><i class="fa-solid fa-gem"></i> Services</a></li>
+            <li><a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a></li>
         </ul>
     </nav>
+    
     <main>
+        <div class="hero-section">
+            <div class="hero-content">
+                <h2>Protecting What Matters Most</h2>
+                <p>We provide tailored, zero-compromise security blueprints and insurance coverage to safeguard your family, assets, and future legacy.</p>
+                <a href="#contact" class="btn-primary">Request Consultation</a>
+            </div>
+        </div>
+
         <section id="about">
-            <h2>About Us</h2>
-            <p>Cornerstone Insurance Firm has been providing reliable insurance solutions for individuals and businesses since [year]. Our mission is to protect what matters most to you.</p>
+            <div class="section-title">
+                <h2>About Us</h2>
+                <div class="title-bar"></div>
+            </div>
+            <p class="about-lead">Since our founding, Cornerstone Insurance Firm has been dedicated to delivering reliable, bespoke insurance solutions for individuals, families, and businesses nationwide.</p>
+            <p>Our mission is to establish an unshakeable foundation of safety and peace of mind. We stand as your protective shield, combining generations of risk-management expertise with a modern, client-first approach to claims and coverage analysis.</p>
         </section>
+        
         <section id="services">
-            <h2>Our Services</h2>
-            <ul>
-                <li>Auto Insurance</li>
-                <li>Home & Property Insurance</li>
-                <li>Life Insurance</li>
-                <li>Business Insurance</li>
-                <li>Health Insurance</li>
-            </ul>
+            <div class="section-title">
+                <h2>Our Services</h2>
+                <div class="title-bar"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-car"></i></div>
+                    <h3>Auto Insurance</h3>
+                    <p>Comprehensive dynamic coverage for personal and commercial transport fleets.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                    <h3>Home & Property</h3>
+                    <p>Shielding your residences and real estate investments from unforeseen hazards.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h3>Life Insurance</h3>
+                    <p>Building generation-spanning financial security and legacy protection plans.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <h3>Business Insurance</h3>
+                    <p>Bespoke liability, operations, and asset protection for modern enterprises.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-stethoscope"></i></div>
+                    <h3>Health Insurance</h3>
+                    <p>Top-tier clinical network access and premium wellness security programs.</p>
+                </div>
+            </div>
         </section>
+        
         <section id="contact">
-            <h2>Contact Us</h2>
-            <p>Phone: (555) 123-4567</p>
-            <p>Email: info@cornerstoneinsurancefirm.com</p>
-            <p>Address: 123 Insurance Ave, Your City, State ZIP</p>
+            <div class="section-title">
+                <h2>Contact Us</h2>
+                <div class="title-bar"></div>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p><a href="tel:844-345-6765" style="color: inherit; text-decoration: none;">844-345-6765</a></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p><a href="mailto:info@cornerstoneinsurancefirm.com" style="color: inherit; text-decoration: none;">info@cornerstoneinsurancefirm.com</a></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <h4>Corporate Office</h4>
+                            <p>123 Insurance Ave, Suite 800<br>New Orleans, LA 70112</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for contacting Cornerstone. An advisor will reach out shortly.');">
+                    <h3>Secure Consultation Request</h3>
+                    <div class="form-group">
+                        <input type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <select required>
+                            <option value="" disabled selected>Select Service Interest</option>
+                            <option value="auto">Auto Insurance</option>
+                            <option value="home">Home & Property</option>
+                            <option value="life">Life Insurance</option>
+                            <option value="business">Business Insurance</option>
+                            <option value="health">Health Insurance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="4" placeholder="Brief Details of Inquiry..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Submit Request</button>
+                </form>
+            </div>
         </section>
     </main>
+    
     <footer>
-        <p>&copy; 2026 Cornerstone Insurance Firm. All rights reserved.</p>
+        <p>&copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection.</p>
     </footer>
-    <script src="script.js"></script>
 </body>
 </html>
