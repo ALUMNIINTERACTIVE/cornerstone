@@ -75,22 +75,40 @@ header::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 16px;
     margin-bottom: 0.8rem;
 }
 
 .logo i {
-    font-size: 2rem;
+    font-size: 2.4rem;
     color: var(--accent-purple);
     text-shadow: 0 0 15px rgba(124, 58, 237, 0.25);
     animation: pulseGlow 3s ease-in-out infinite;
 }
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
 .logo h1 {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 500;
     letter-spacing: 0.15em;
     color: var(--text-main);
+    line-height: 1.1;
+}
+
+.logo-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent-purple-dark);
+    margin-top: 2px;
+    font-weight: 600;
+    line-height: 1;
 }
 
 .subtitle {
