@@ -1610,6 +1610,62 @@ footer p {
     background-color: var(--bg-secondary);
 }
 
+.minimal-header {
+    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 100%);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.2rem 1.5rem !important; /* Smaller compact padding */
+    text-align: center;
+    position: relative;
+    z-index: 101;
+}
+
+.minimal-header .header-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.minimal-header .logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 0.2rem;
+}
+
+.minimal-header .logo i {
+    font-size: 1.6rem;
+}
+
+.minimal-header .logo-text {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.minimal-header .logo h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+}
+
+.minimal-header .logo-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    margin-top: 1px;
+}
+
+.minimal-header .subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
 .top-nav-actions {
     position: absolute;
     top: 24px;
