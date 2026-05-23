@@ -8,7 +8,7 @@
     <meta name="description"
         content="Cornerstone Insurance Firm — tailored insurance coverage for auto, home, life, health, and business. Ask our AI agent a question or start a new policy today.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css?v=2.1.0">
+    <link rel="stylesheet" href="style.css?v=2.2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -28,7 +28,7 @@
 
     <nav>
         <ul>
-            <li><a href="#assistant"><i class="fa-solid fa-robot"></i> AI Agent</a></li>
+            <li><a href="#assistant"><i class="fa-solid fa-robot"></i> Agent</a></li>
             <li><a href="#about"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
             <li><a href="#services"><i class="fa-solid fa-gem"></i> Services</a></li>
             <li><a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a></li>
@@ -66,7 +66,7 @@
                             <span>Khalil &mdash; Insurance Specialist</span>
                         </div>
                         <button class="btn-reset-chat" onclick="resetConversation()" title="Start a new conversation">
-                            <i class="fa-solid fa-rotate-left"></i>
+                            <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                     </div>
                     <div class="chat-panel-messages" id="console-chat-messages">
@@ -93,7 +93,7 @@
                         <!-- Staged file preview bubble -->
                         <div id="console-staged-file-bubble" class="staged-file-bubble hidden">
                             <i class="fa-solid fa-file-image"></i>
-                            <span id="console-staged-file-name">preview.jpg</span>
+                            <span id="console-staged-file-name"></span>
                             <button type="button" class="btn-clear-staged"
                                 onclick="clearConsoleStagedFile()">&times;</button>
                         </div>
@@ -215,19 +215,19 @@
                 <div class="title-bar"></div>
                 <p class="section-subtitle">Reach our team directly — we're always here to help.</p>
             </div>
-            <div class="contact-info" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+            <div class="contact-grid">
                 <div class="info-item">
                     <i class="fa-solid fa-phone"></i>
                     <div>
                         <h4>Phone</h4>
-                        <p><a href="tel:844-345-6765" style="color: inherit; text-decoration: none;">844-345-6765</a></p>
+                        <p><a href="tel:844-345-6765">844-345-6765</a></p>
                     </div>
                 </div>
                 <div class="info-item">
                     <i class="fa-solid fa-envelope"></i>
                     <div>
                         <h4>Email</h4>
-                        <p><a href="mailto:info@cornerstoneinsurancefirm.com" style="color: inherit; text-decoration: none;">info@cornerstoneinsurancefirm.com</a></p>
+                        <p><a href="mailto:info@cornerstoneinsurancefirm.com">info@cornerstoneinsurancefirm.com</a></p>
                     </div>
                 </div>
                 <div class="info-item">
@@ -251,7 +251,8 @@
     <footer>
         <p>&copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection. | Designed by <a
                 href="https://www.alumniinteractive.com" target="_blank"
-                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em;">ALUMNI INTΞRACTIVΞ</a></p>
+                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em;">ALUMNI
+                INTΞRACTIVΞ</a></p>
     </footer>
 
     <script src="script.js"></script>
