@@ -40,26 +40,5 @@
         "Does the property feature automated active fire sprinkler and burglar alarm telemetry?"
       ]
     }
-  },
-  {
-    "id": "sub_1779525519758",
-    "type": "new_policy",
-    "name": "John Doe",
-    "email": "johnd@mail.com",
-    "policyNumber": null,
-    "service": null,
-    "details": "555444766",
-    "timestamp": "2026-05-23T08:38:39.758Z",
-    "document": null,
-    "aiVerdict": {
-      "verified": true,
-      "inquirySummary": "General consultation dossier indexed for client John Doe.",
-      "riskProfile": "Low",
-      "recommendedCoverageLimits": "Standard General Liability ($1,000,000)",
-      "followUpQuestions": [
-        "Could you provide secondary official government identification?",
-        "Is there any historical loss-of-asset record within the last 36 months?"
-      ]
-    }
   }
 ]

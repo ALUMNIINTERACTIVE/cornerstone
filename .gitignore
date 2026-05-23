@@ -4,3 +4,5 @@ node_modules/
 uploads/*
 !uploads/.gitkeep
 .env
+db_submissions.json
+db_submissions.json.tmp
