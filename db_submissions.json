@@ -2,15 +2,15 @@
   {
     "id": "sub_1",
     "type": "consultation",
-    "name": "Satoshi Nakamoto",
-    "email": "satoshi@alumnimail.app",
+    "name": "Marcus Sterling",
+    "email": "marcus.sterling@sterlingholdings.com",
     "service": "life",
-    "details": "Interested in premium generation-spanning estate trust plans and E2EE decentralized life vault structures. Please assign a senior risk analyst.",
+    "details": "Interested in premium generation-spanning estate trust plans and legacy asset portfolios. Please assign a senior risk analyst.",
     "timestamp": "2026-05-22T21:44:12.000Z",
     "document": null,
     "aiVerdict": {
       "verified": true,
-      "inquirySummary": "Client wants high-end generation-spanning wealth transfer structures and encrypted vaults.",
+      "inquirySummary": "Client wants high-end generation-spanning wealth transfer structures and legacy asset portfolios.",
       "riskProfile": "Low",
       "recommendedCoverageLimits": "$10,000,000 Legacy Protection Policy",
       "followUpQuestions": [
@@ -22,8 +22,8 @@
   {
     "id": "sub_2",
     "type": "policy_change",
-    "name": "Khalil Gibran",
-    "email": "khalil@alumnimail.app",
+    "name": "Helena Vance",
+    "email": "helena.vance@vanceenterprises.com",
     "policyNumber": "CS-99482-LA",
     "details": "Need to add a secondary brick-and-mortar storefront property in the French Quarter of New Orleans to my active commercial business liability plan.",
     "timestamp": "2026-05-22T22:15:30.000Z",

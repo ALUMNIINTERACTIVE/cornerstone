@@ -111,60 +111,84 @@
                     </div>
                 </div>
                 
-                <form class="contact-form" id="portal-form">
-                    <div class="form-tabs">
-                        <button type="button" class="form-tab-btn active" id="tab-consultation" onclick="switchFormType('consultation')">Consultation</button>
-                        <button type="button" class="form-tab-btn" id="tab-policy-change" onclick="switchFormType('policy_change')">Policy Change</button>
-                    </div>
-                    
-                    <input type="hidden" name="type" id="form-type-field" value="consultation">
-                    
-                    <h3 id="form-title">Secure Consultation Request</h3>
-                    
-                    <div class="form-group">
-                        <input type="text" name="name" placeholder="Full Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" name="email" placeholder="Email Address" required>
-                    </div>
-                    
-                    <!-- Policy Number (visible only on Policy Change) -->
-                    <div class="form-group hidden" id="policy-number-group">
-                        <input type="text" name="policyNumber" placeholder="Policy Number (e.g. CS-12345-LA)">
-                    </div>
-                    
-                    <!-- Service Selection (visible on Consultation) -->
-                    <div class="form-group" id="service-select-group">
-                        <select name="service" id="service-select">
-                            <option value="" disabled selected>Select Service Interest</option>
-                            <option value="auto">Auto Insurance</option>
-                            <option value="home">Home & Property</option>
-                            <option value="life">Life Insurance</option>
-                            <option value="business">Business Insurance</option>
-                            <option value="health">Health Insurance</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <textarea rows="4" name="details" id="details-textarea" placeholder="Brief Details of Inquiry..." required></textarea>
-                    </div>
-                    
-                    <!-- Drag and Drop document upload zone -->
-                    <div class="form-group">
-                        <div class="drag-drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <p id="drop-text">Drag & drop document image here or click to browse</p>
-                            <input type="file" id="file-input" name="document" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                            <div id="file-preview-capsule" class="hidden" onclick="event.stopPropagation()">
+                <div class="chat-console-container" id="contact-chat-console">
+                    <!-- Left Panel: Conversational Terminal -->
+                    <div class="chat-thread-panel" id="console-drop-zone">
+                        <div class="chat-panel-header">
+                            <div class="chat-panel-status">
+                                <span class="status-indicator-dot online"></span>
+                                <span>Secure Offline GPU AI Node</span>
+                            </div>
+                        </div>
+                        <div class="chat-panel-messages" id="console-chat-messages">
+                            <div class="chat-message assistant">
+                                <p>How may I assist you today?</p>
+                            </div>
+                        </div>
+                        <div class="chat-panel-input-container">
+                            <div class="chat-input-row">
+                                <button type="button" class="btn-attach" onclick="document.getElementById('console-file-input').click()" title="Attach document image">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </button>
+                                <input type="text" id="console-chat-input-field" placeholder="Describe your inquiry, request policy changes, or ask questions..." onkeydown="if(event.key === 'Enter') sendConsoleChatMessage()">
+                                <button type="button" class="btn-send" onclick="sendConsoleChatMessage()" title="Send secure message">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <input type="file" id="console-file-input" name="document" accept="image/*" style="display: none;" onchange="handleConsoleFileSelect(event)">
+                            
+                            <!-- Staged file preview bubble -->
+                            <div id="console-staged-file-bubble" class="staged-file-bubble hidden">
                                 <i class="fa-solid fa-file-image"></i>
-                                <span id="file-preview-name">preview.jpg</span>
-                                <button type="button" class="remove-file-btn" onclick="clearAttachedFile()">&times;</button>
+                                <span id="console-staged-file-name">preview.jpg</span>
+                                <button type="button" class="btn-clear-staged" onclick="clearConsoleStagedFile()">&times;</button>
                             </div>
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn-submit" id="submit-btn">Submit Secure Request</button>
-                </form>
+                    <!-- Right Panel: Secure Ingestion Staging Vault -->
+                    <div class="staging-vault-panel">
+                        <div class="vault-header">
+                            <i class="fa-solid fa-vault"></i>
+                            <h3>Secure Ingestion Vault</h3>
+                        </div>
+                        <div class="vault-status-indicator">
+                            <span class="vault-led active"></span>
+                            <span class="vault-status-text">Active Encryption Tunnel</span>
+                        </div>
+                        
+                        <div class="vault-fields">
+                            <div class="vault-field">
+                                <div class="vault-field-label">Category Scope</div>
+                                <div class="vault-field-value" id="vault-badge-type">General Inquiry</div>
+                            </div>
+                            
+                            <div class="vault-field">
+                                <div class="vault-field-label">Client Identity</div>
+                                <div class="vault-field-value unpopulated" id="vault-identity">Not Detected</div>
+                            </div>
+                            
+                            <div class="vault-field">
+                                <div class="vault-field-label">Target Policy / Line</div>
+                                <div class="vault-field-value unpopulated" id="vault-scope">Not Specified</div>
+                            </div>
+                            
+                            <div class="vault-field">
+                                <div class="vault-field-label">Staged Documents</div>
+                                <div class="vault-field-value unpopulated" id="vault-file">No files attached</div>
+                            </div>
+                            
+                            <div class="vault-field">
+                                <div class="vault-field-label">Request Statement</div>
+                                <div class="vault-field-value unpopulated" id="vault-details">Awaiting details in chat...</div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
+                            <i class="fa-solid fa-lock"></i> Verify & Submit Dossier
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
