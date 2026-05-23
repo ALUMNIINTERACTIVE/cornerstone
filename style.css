@@ -1695,11 +1695,11 @@ main {
 /* Welcome Title (Baskerville / Serif premium centered text) */
 .chat-welcome-title {
     font-family: var(--font-luxury);
-    font-size: 2.8rem;
+    font-size: 1.8rem;
     text-align: center;
     color: var(--text-main);
     font-weight: 500;
-    margin-bottom: 2.2rem;
+    margin-bottom: 1.6rem;
     letter-spacing: -0.01em;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     opacity: 1;
@@ -1858,18 +1858,7 @@ main {
    ========================================================================== */
 
 .minimal-chat-layout .staging-vault-panel {
-    width: 380px;
-    height: 100%;
-    background: var(--bg-secondary);
-    border-left: 1px solid var(--border-color);
-    position: fixed;
-    right: -380px;
-    top: 0;
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 1001; /* Display over top actions & footer */
-    display: flex !important;
-    flex-direction: column;
-    box-shadow: none;
+    display: none !important;
 }
 
 .minimal-chat-layout .staging-vault-panel.open {

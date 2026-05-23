@@ -325,7 +325,9 @@ function repromptForStep() {
 }
 
 function buildCompletionMessage() {
-    return `All set, ${vaultState.firstName}! I've collected everything I need.\n\nPlease review your information in the Service Request panel and click **Verify & Submit Dossier** to securely send your request to our team.\n\nIn the meantime, feel free to ask me any insurance questions!`;
+    // Automatically submit the quote dossier in the background
+    setTimeout(submitStagedDossier, 1500);
+    return `All set, ${vaultState.firstName}! I've collected everything I need.\n\nI am now securely encrypting and transmitting your quote request to our underwriting team...`;
 }
 
 // ─── KNOWLEDGE QUERY HANDLER ──────────────────────────────────────────────────

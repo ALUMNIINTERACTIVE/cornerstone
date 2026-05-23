@@ -16,12 +16,7 @@
     <!-- Drifting Luxury Particle Canvas -->
     <canvas id="particle-canvas"></canvas>
 
-    <!-- Sleek, Unobtrusive Dossier Vault Button (Top Right corner) -->
-    <div class="top-nav-actions">
-        <button type="button" class="btn-toggle-vault" onclick="toggleVault()" title="Open Secure Ingestion Vault">
-            <i class="fa-solid fa-vault"></i> <span class="btn-text">Dossier Vault</span>
-        </button>
-    </div>
+    <!-- Top-level controls removed for maximum minimalism -->
 
     <!-- Main Content Area: Immersive Ultra-Minimalist Console -->
     <main>
@@ -75,8 +70,8 @@
                 </div>
             </div>
 
-            <!-- Right Panel: Secure Ingestion Staging Vault (Drawer) -->
-            <div class="staging-vault-panel" id="staging-vault-panel">
+            <!-- Right Panel: Secure Ingestion Staging Vault (Hidden DOM to maintain script sync) -->
+            <div class="staging-vault-panel" id="staging-vault-panel" style="display: none !important;">
                 <div class="vault-header">
                     <div class="vault-header-title">
                         <i class="fa-solid fa-vault"></i>
