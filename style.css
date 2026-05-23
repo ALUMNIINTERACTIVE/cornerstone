@@ -1129,66 +1129,69 @@ footer p {
 .chat-input-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 28px; /* Smooth pill shape */
+    padding: 4px 6px 4px 12px;
+    transition: var(--transition-smooth);
+    width: 100%;
+}
+
+.chat-input-row:focus-within {
+    border-color: var(--accent-purple);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.08);
 }
 
 .btn-attach {
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: none;
     color: var(--text-secondary);
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 1.1rem;
     transition: var(--transition-smooth);
-    border-radius: var(--border-radius);
+    border-radius: 50%;
 }
 
 .btn-attach:hover {
-    border-color: var(--accent-purple-light);
     color: var(--accent-purple);
-    background: #ffffff;
+    background: rgba(124, 58, 237, 0.07);
 }
 
 .chat-panel-input-container input[type="text"] {
     flex-grow: 1;
-    border: 1px solid var(--border-color);
-    padding: 0.8rem 1.2rem;
+    border: none !important; /* Remove individual border */
+    background: transparent !important; /* Transparent wrapper */
+    padding: 0.6rem 0.4rem;
     font-family: var(--font-luxury);
     font-size: 1.05rem;
-    border-radius: var(--border-radius);
-    outline: none;
-    transition: var(--transition-smooth);
-    background: #ffffff;
-}
-
-.chat-panel-input-container input[type="text"]:focus {
-    border-color: var(--accent-purple);
-    box-shadow: 0 0 10px rgba(124, 58, 237, 0.08);
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .btn-send {
-    background: var(--accent-purple-dark);
-    border: 1px solid var(--accent-purple-dark);
+    background: var(--accent-purple);
+    border: none;
     color: #ffffff;
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: var(--transition-smooth);
-    border-radius: var(--border-radius);
+    border-radius: 50%;
 }
 
 .btn-send:hover {
-    background: var(--accent-purple);
-    border-color: var(--accent-purple);
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+    background: var(--accent-purple-dark);
+    transform: scale(1.05);
 }
 
 /* Staged file inside console input */

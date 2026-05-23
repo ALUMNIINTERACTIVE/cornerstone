@@ -340,7 +340,7 @@ function handleKnowledgeQuery(text) {
     // --- Greeting detection (don't intercept from guided step, just answer warmly) ---
     if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy)[\s!?.,]*$/.test(lower)) {
         const name = vaultState.firstName ? `, ${vaultState.firstName}` : '';
-        return `Hello${name}! I'm Khalil, Cornerstone's Insurance Specialist. I'm here to help with any insurance questions you have, or I can get you started on a new policy or policy change.\n\nWhat can I do for you today?`;
+        return `Hello${name}! I'm Cornerstone's Insurance Specialist. I'm here to help with any insurance questions you have, or I can get you started on a new policy or policy change.\n\nWhat can I do for you today?`;
     }
 
     // --- Question detection ---
@@ -668,7 +668,7 @@ function appendConsoleMessageUI(role, text, showOptionButtons = false) {
     if (showOptionButtons) {
         const p = document.createElement('p');
         p.style.whiteSpace = 'pre-line';
-        p.innerText = `Hello! Welcome to Cornerstone Insurance Firm.\n\nI'm Khalil — your dedicated insurance specialist.\n\nHow may I assist you today?`;
+        p.innerText = `Hello! Welcome to Cornerstone Insurance Firm.\n\nI'm your dedicated insurance specialist.\n\nHow may I assist you today?`;
         msg.appendChild(p);
 
         const opts = document.createElement('div');
