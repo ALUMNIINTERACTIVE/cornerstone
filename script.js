@@ -641,6 +641,12 @@ function updateVaultUI() {
         submitBtn.disabled = !isReady;
         submitBtn.classList.toggle('ready', isReady);
     }
+
+    // Auto-open vault drawer once a request type has been staged to show compiling progress!
+    const vaultPanel = document.getElementById('staging-vault-panel');
+    if (vaultPanel && vaultState.type && vaultState.type !== 'awaiting' && !vaultPanel.classList.contains('open')) {
+        vaultPanel.classList.add('open');
+    }
 }
 
 function setVaultBadge(el, text, color, bg, border) {

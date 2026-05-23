@@ -4,16 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cornerstone Insurance Firm</title>
+    <title>Cornerstone Insurance Firm - AI Concierge</title>
     <meta name="description"
-        content="Cornerstone Insurance Firm — tailored insurance coverage for auto, home, life, health, and business. Ask our AI agent a question or start a new policy today.">
+        content="Cornerstone Insurance Firm — tailored insurance coverage. Ask our AI agent a question or start a new policy today.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css?v=2.2.0">
+    <link rel="stylesheet" href="style.css?v=3.1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body>
-    <header>
+<body class="minimal-chat-layout">
+    <!-- Compact Elegant Brand Header -->
+    <header class="minimal-header">
         <div class="header-container">
             <div class="logo">
                 <i class="fa-solid fa-cube purple-glow"></i>
@@ -23,229 +24,116 @@
                 </div>
             </div>
             <p class="subtitle">Your Trusted Insurance Partner</p>
+            
+            <button type="button" class="btn-toggle-vault" onclick="toggleVault()" title="Open Secure Ingestion Vault">
+                <i class="fa-solid fa-vault"></i> <span class="btn-text">Dossier Vault</span>
+            </button>
         </div>
     </header>
 
-    <nav>
-        <ul>
-            <li><a href="#assistant"><i class="fa-solid fa-robot"></i> Agent</a></li>
-            <li><a href="#about"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
-            <li><a href="#services"><i class="fa-solid fa-gem"></i> Services</a></li>
-            <li><a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a></li>
-        </ul>
-    </nav>
-
+    <!-- Main Content Area: Centered Full-Height Conversational Console -->
     <main>
-        <div class="hero-section">
-            <div class="hero-content">
-                <h2>Protecting What Matters Most</h2>
-                <p>We provide tailored, zero-compromise security blueprints and insurance coverage to safeguard your
-                    family, assets, and future legacy.</p>
-                <a href="#assistant" class="btn-primary">Speak with Our Agent</a>
-            </div>
-        </div>
-
-        <!-- ================================================================
-             AI INSURANCE ASSISTANT — Standalone Section
-             ================================================================ -->
-        <section id="assistant">
-            <div class="section-title">
-                <h2>Help Desk</h2>
-                <div class="title-bar"></div>
-                <p class="section-subtitle">Ask a question, get a quote, or submit a policy request — our agent is
-                    available 24/7.</p>
-            </div>
-
-            <!-- Conversational AI Ingestion Console -->
-            <div class="chat-console-container" id="contact-chat-console">
-                <!-- Left Panel: Conversational Terminal -->
-                <div class="chat-thread-panel" id="console-drop-zone">
-                    <div class="chat-panel-header">
-                        <div class="chat-panel-status">
-                            <span class="status-indicator-dot online"></span>
-                            <span>Khalil &mdash; Insurance Specialist</span>
-                        </div>
+        <div class="chat-console-container" id="contact-chat-console">
+            <!-- Left Panel: Conversational Terminal -->
+            <div class="chat-thread-panel" id="console-drop-zone">
+                <div class="chat-panel-header">
+                    <div class="chat-panel-status">
+                        <span class="status-indicator-dot online"></span>
+                        <span>Khalil &mdash; Insurance Specialist</span>
+                    </div>
+                    <div class="header-actions">
                         <button class="btn-reset-chat" onclick="resetConversation()" title="Start a new conversation">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                     </div>
-                    <div class="chat-panel-messages" id="console-chat-messages">
-                        <!-- Messages rendered by JS -->
+                </div>
+                <div class="chat-panel-messages" id="console-chat-messages">
+                    <!-- Messages rendered by JS -->
+                </div>
+                <div class="chat-panel-input-container">
+                    <div class="chat-input-row">
+                        <button type="button" class="btn-attach"
+                            onclick="document.getElementById('console-file-input').click()"
+                            title="Attach document image">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+                        <input type="text" id="console-chat-input-field"
+                            placeholder="Ask a question or type your response..."
+                            onkeydown="if(event.key === 'Enter') sendConsoleChatMessage()">
+                        <button type="button" class="btn-send" onclick="sendConsoleChatMessage()"
+                            title="Send message">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
                     </div>
-                    <div class="chat-panel-input-container">
-                        <div class="chat-input-row">
-                            <button type="button" class="btn-attach"
-                                onclick="document.getElementById('console-file-input').click()"
-                                title="Attach document image">
-                                <i class="fa-solid fa-paperclip"></i>
-                            </button>
-                            <input type="text" id="console-chat-input-field"
-                                placeholder="Ask a question or type your response..."
-                                onkeydown="if(event.key === 'Enter') sendConsoleChatMessage()">
-                            <button type="button" class="btn-send" onclick="sendConsoleChatMessage()"
-                                title="Send message">
-                                <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </div>
-                        <input type="file" id="console-file-input" name="document" accept="image/*"
-                            style="display: none;" onchange="handleConsoleFileSelect(event)">
+                    <input type="file" id="console-file-input" name="document" accept="image/*"
+                        style="display: none;" onchange="handleConsoleFileSelect(event)">
 
-                        <!-- Staged file preview bubble -->
-                        <div id="console-staged-file-bubble" class="staged-file-bubble hidden">
-                            <i class="fa-solid fa-file-image"></i>
-                            <span id="console-staged-file-name"></span>
-                            <button type="button" class="btn-clear-staged"
-                                onclick="clearConsoleStagedFile()">&times;</button>
-                        </div>
+                    <!-- Staged file preview bubble -->
+                    <div id="console-staged-file-bubble" class="staged-file-bubble hidden">
+                        <i class="fa-solid fa-file-image"></i>
+                        <span id="console-staged-file-name"></span>
+                        <button type="button" class="btn-clear-staged"
+                            onclick="clearConsoleStagedFile()">&times;</button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Right Panel: Secure Ingestion Staging Vault -->
-                <div class="staging-vault-panel">
-                    <div class="vault-header">
+            <!-- Right Panel: Secure Ingestion Staging Vault (Drawer) -->
+            <div class="staging-vault-panel" id="staging-vault-panel">
+                <div class="vault-header">
+                    <div class="vault-header-title">
                         <i class="fa-solid fa-vault"></i>
                         <h3>Service Request</h3>
                     </div>
-                    <div class="vault-status-indicator">
-                        <span class="vault-led active"></span>
-                        <span class="vault-status-text">Active Encryption Tunnel</span>
+                    <button type="button" class="btn-close-vault" onclick="toggleVault()">&times;</button>
+                </div>
+                <div class="vault-status-indicator">
+                    <span class="vault-led active"></span>
+                    <span class="vault-status-text">Active Encryption Tunnel</span>
+                </div>
+
+                <div class="vault-fields">
+                    <div class="vault-field">
+                        <div class="vault-field-label">Request Type</div>
+                        <div class="vault-field-value" id="vault-badge-type">Awaiting Selection</div>
                     </div>
 
-                    <div class="vault-fields">
-                        <div class="vault-field">
-                            <div class="vault-field-label">Request Type</div>
-                            <div class="vault-field-value" id="vault-badge-type">Awaiting Selection</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label">Client Name</div>
-                            <div class="vault-field-value unpopulated" id="vault-identity">Not Detected</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label">Email Address</div>
-                            <div class="vault-field-value unpopulated" id="vault-email">Not Detected</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label">Phone Number</div>
-                            <div class="vault-field-value unpopulated" id="vault-phone">Not Detected</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label" id="vault-scope-label">Driver's License / Change Details
-                            </div>
-                            <div class="vault-field-value unpopulated" id="vault-scope">Not Specified</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label">Staged Documents</div>
-                            <div class="vault-field-value unpopulated" id="vault-file">No files attached</div>
-                        </div>
-
-                        <div class="vault-field">
-                            <div class="vault-field-label">Request Statement</div>
-                            <div class="vault-field-value unpopulated" id="vault-details">Awaiting details in chat...
-                            </div>
-                        </div>
+                    <div class="vault-field">
+                        <div class="vault-field-label">Client Name</div>
+                        <div class="vault-field-value unpopulated" id="vault-identity">Not Detected</div>
                     </div>
 
-                    <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()"
-                        disabled>
-                        <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
-                    </button>
-                </div>
-            </div>
-        </section>
+                    <div class="vault-field">
+                        <div class="vault-field-label">Email Address</div>
+                        <div class="vault-field-value unpopulated" id="vault-email">Not Detected</div>
+                    </div>
 
-        <!-- About Us -->
-        <section id="about">
-            <div class="section-title">
-                <h2>About Us</h2>
-                <div class="title-bar"></div>
-            </div>
-            <p class="about-lead">Since our founding, Cornerstone Insurance Firm has been dedicated to delivering
-                reliable, insurance solutions for businesses nationwide.</p>
-            <p>Our mission is to establish an unshakeable foundation of safety and peace of mind. We stand as your
-                protective shield, combining generations of risk-management expertise with a modern, client-first
-                approach to claims and coverage analysis.</p>
-        </section>
+                    <div class="vault-field">
+                        <div class="vault-field-label">Phone Number</div>
+                        <div class="vault-field-value unpopulated" id="vault-phone">Not Detected</div>
+                    </div>
 
-        <!-- Services -->
-        <section id="services">
-            <div class="section-title">
-                <h2>Our Services</h2>
-                <div class="title-bar"></div>
-            </div>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-car"></i></div>
-                    <h3>Auto Insurance</h3>
-                    <p>Comprehensive dynamic coverage for personal and commercial transport fleets.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-house-chimney"></i></div>
-                    <h3>Home &amp; Property</h3>
-                    <p>Shielding your residences and real estate investments from unforeseen hazards.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <h3>Life Insurance</h3>
-                    <p>Building generation-spanning financial security and legacy protection plans.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-briefcase"></i></div>
-                    <h3>Business Insurance</h3>
-                    <p>Bespoke liability, operations, and asset protection for modern enterprises.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-stethoscope"></i></div>
-                    <h3>Health Insurance</h3>
-                    <p>Top-tier clinical network access and premium wellness security programs.</p>
-                </div>
-            </div>
-        </section>
+                    <div class="vault-field">
+                        <div class="vault-field-label" id="vault-scope-label">Driver's License / Change Details</div>
+                        <div class="vault-field-value unpopulated" id="vault-scope">Not Specified</div>
+                    </div>
 
-        <!-- ================================================================
-             CONTACT US — Moved to bottom
-             ================================================================ -->
-        <section id="contact">
-            <div class="section-title">
-                <h2>Contact Us</h2>
-                <div class="title-bar"></div>
-                <p class="section-subtitle">Reach our team directly — we're always here to help.</p>
+                    <div class="vault-field">
+                        <div class="vault-field-label">Staged Documents</div>
+                        <div class="vault-field-value unpopulated" id="vault-file">No files attached</div>
+                    </div>
+
+                    <div class="vault-field">
+                        <div class="vault-field-label">Request Statement</div>
+                        <div class="vault-field-value unpopulated" id="vault-details">Awaiting details in chat...</div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
+                    <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
+                </button>
             </div>
-            <div class="contact-grid">
-                <div class="info-item">
-                    <i class="fa-solid fa-phone"></i>
-                    <div>
-                        <h4>Phone</h4>
-                        <p><a href="tel:844-345-6765">844-345-6765</a></p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fa-solid fa-envelope"></i>
-                    <div>
-                        <h4>Email</h4>
-                        <p><a href="mailto:info@cornerstoneinsurancefirm.com">info@cornerstoneinsurancefirm.com</a></p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <div>
-                        <h4>Corporate Office</h4>
-                        <p>9029 Jefferson Hwy D 1135<br>New Orleans, LA 70123</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fa-solid fa-clock"></i>
-                    <div>
-                        <h4>Office Hours</h4>
-                        <p>Mon – Fri: 9am – 6pm CST<br>Khalil: 24 / 7</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
     <footer>
@@ -256,6 +144,13 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Immersive Vault Drawer Toggle Function
+        function toggleVault() {
+            const vault = document.getElementById('staging-vault-panel');
+            vault.classList.toggle('open');
+        }
+    </script>
 </body>
 
 </html>

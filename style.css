@@ -1594,3 +1594,229 @@ footer p {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   MINIMALIST CONVERSATIONAL AI-FIRST LAYOUT
+   ========================================================================== */
+
+.minimal-chat-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+}
+
+.minimal-header {
+    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 100%);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.2rem 1.5rem !important; /* Smaller compact padding */
+    text-align: center;
+    position: relative;
+    z-index: 101;
+}
+
+.minimal-header .header-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.minimal-header .logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 0.2rem;
+}
+
+.minimal-header .logo i {
+    font-size: 1.6rem;
+}
+
+.minimal-header .logo-text {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.minimal-header .logo h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+}
+
+.minimal-header .logo-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    margin-top: 1px;
+}
+
+.minimal-header .subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.minimal-header .btn-toggle-vault {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--accent-purple-dark);
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--border-radius);
+    font-family: var(--font-luxury);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition-smooth);
+}
+
+.minimal-header .btn-toggle-vault:hover {
+    background: var(--accent-purple);
+    color: #ffffff;
+    border-color: var(--accent-purple);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+/* Close Button in Vault Staging Panel */
+.btn-close-vault {
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    line-height: 1;
+    transition: var(--transition-smooth);
+}
+
+.btn-close-vault:hover {
+    color: var(--accent-purple);
+    transform: scale(1.1);
+}
+
+/* Immersive Chat Layout */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+.minimal-chat-layout .chat-console-container {
+    position: relative;
+    display: flex;
+    height: calc(100vh - 170px); /* Fill the rest of the screen */
+    max-width: 1000px;
+    width: 100%;
+    margin: 1rem auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-premium);
+    overflow: hidden;
+}
+
+.minimal-chat-layout .chat-thread-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-right: none;
+    background: #ffffff;
+}
+
+.minimal-chat-layout .chat-panel-messages {
+    max-height: none !important; /* Grow vertically to fill the console container */
+    flex-grow: 1;
+}
+
+.minimal-chat-layout .staging-vault-panel {
+    width: 380px;
+    height: 100%;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    position: absolute;
+    right: -380px;
+    top: 0;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    display: flex !important;
+    flex-direction: column;
+    box-shadow: none;
+}
+
+.minimal-chat-layout .staging-vault-panel.open {
+    right: 0;
+    box-shadow: -10px 0 30px rgba(124, 58, 237, 0.08);
+}
+
+.minimal-chat-layout .vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.minimal-chat-layout .vault-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.minimal-chat-layout .vault-header-title h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+footer {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    z-index: 101;
+}
+
+/* Responsive Vault styles */
+@media (max-width: 900px) {
+    .minimal-header .btn-toggle-vault {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        margin-top: 0.5rem;
+    }
+    
+    .minimal-chat-layout .chat-console-container {
+        height: calc(100vh - 210px);
+    }
+}
+
+@media (max-width: 768px) {
+    .minimal-chat-layout .staging-vault-panel {
+        width: 100%;
+        right: -100%;
+    }
+    .minimal-header .btn-toggle-vault .btn-text {
+        display: inline-block;
+    }
+}
