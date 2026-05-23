@@ -489,6 +489,12 @@ function routeInsuranceQuestion(lower) {
 
 // ─── MATH ENGINE ─────────────────────────────────────────────────────────────
 function tryMath(text) {
+    // Guard: bail out if input looks like a phone number
+    // Covers: 504-555-4556 | (504) 555-4556 | 5045554556 | 504.555.4556
+    if (/^\s*\(?\d{3}\)?[\s\.\-]?\d{3}[\s\.\-]\d{4}\s*$/.test(text)) return null;
+    const digitsOnly = text.replace(/[\s\-\.\(\)]/g, '');
+    if (/^\d{10,11}$/.test(digitsOnly)) return null;
+
     // Strip common phrases to isolate the expression
     const cleaned = text
         .replace(/what is|what's|calculate|compute|solve|how much is|equals/gi, '')
@@ -497,6 +503,9 @@ function tryMath(text) {
 
     if (!cleaned || !/[\+\-\*\/]/.test(cleaned)) return null;
     if (/[a-zA-Z]{2,}/.test(cleaned)) return null; // still has words
+
+    // Extra guard: 3-3-4 digit patterns after stripping (phone slipped through)
+    if (/^\s*\d{3}\s+\d{3}\s+\d{4}\s*$/.test(cleaned)) return null;
 
     try {
         // Safe evaluation — only allow numeric expressions
