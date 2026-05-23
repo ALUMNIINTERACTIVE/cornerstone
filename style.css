@@ -1599,7 +1599,7 @@ footer p {
 }
 
 /* ==========================================================================
-   MINIMALIST CONVERSATIONAL AI-FIRST LAYOUT
+   MINIMALIST CONVERSATIONAL AI-FIRST LAYOUT (Ready When You Are style)
    ========================================================================== */
 
 .minimal-chat-layout {
@@ -1610,72 +1610,19 @@ footer p {
     background-color: var(--bg-secondary);
 }
 
-.minimal-header {
-    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 100%);
-    border-bottom: 1px solid var(--border-color);
-    padding: 1.2rem 1.5rem !important; /* Smaller compact padding */
-    text-align: center;
-    position: relative;
-    z-index: 101;
-}
-
-.minimal-header .header-container {
-    position: relative;
-    max-width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.minimal-header .logo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 0.2rem;
-}
-
-.minimal-header .logo i {
-    font-size: 1.6rem;
-}
-
-.minimal-header .logo-text {
-    align-items: flex-start;
-    text-align: left;
-}
-
-.minimal-header .logo h1 {
-    font-size: 1.4rem;
-    letter-spacing: 0.1em;
-}
-
-.minimal-header .logo-sub {
-    font-size: 0.55rem;
-    letter-spacing: 0.35em;
-    margin-top: 1px;
-}
-
-.minimal-header .subtitle {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
-}
-
-.minimal-header .btn-toggle-vault {
+.top-nav-actions {
     position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--bg-secondary);
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.top-nav-actions .btn-toggle-vault {
+    background: #ffffff;
     border: 1px solid var(--border-color);
     color: var(--accent-purple-dark);
     padding: 0.5rem 1.2rem;
-    border-radius: var(--border-radius);
+    border-radius: 20px;
     font-family: var(--font-luxury);
     font-size: 0.9rem;
     cursor: pointer;
@@ -1683,9 +1630,10 @@ footer p {
     align-items: center;
     gap: 8px;
     transition: var(--transition-smooth);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-.minimal-header .btn-toggle-vault:hover {
+.top-nav-actions .btn-toggle-vault:hover {
     background: var(--accent-purple);
     color: #ffffff;
     border-color: var(--accent-purple);
@@ -1713,49 +1661,212 @@ footer p {
 main {
     flex: 1;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    padding: 0 1rem;
+    align-items: center;
+    padding: 0 1.5rem;
+    width: 100%;
 }
 
 .minimal-chat-layout .chat-console-container {
     position: relative;
     display: flex;
-    height: calc(100vh - 170px); /* Fill the rest of the screen */
-    max-width: 1000px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     width: 100%;
-    margin: 1rem auto;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background: var(--bg-primary);
-    box-shadow: var(--shadow-premium);
-    overflow: hidden;
+    max-width: 800px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
 }
 
-.minimal-chat-layout .chat-thread-panel {
-    flex: 1;
+.minimal-chat-core {
+    width: 100%;
+    max-width: 680px;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    border-right: none;
-    background: #ffffff;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: var(--transition-smooth);
+}
+
+/* Welcome Title (Baskerville / Serif premium centered text) */
+.chat-welcome-title {
+    font-family: var(--font-luxury);
+    font-size: 2.8rem;
+    text-align: center;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 2.2rem;
+    letter-spacing: -0.01em;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1;
+}
+
+/* Thread Panel - Grows dynamically once user chats */
+.minimal-chat-layout .chat-thread-panel {
+    width: 100%;
+    background: transparent;
+    border: none;
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .minimal-chat-layout .chat-panel-messages {
-    max-height: none !important; /* Grow vertically to fill the console container */
+    max-height: none !important;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px 0;
     flex-grow: 1;
 }
+
+/* Pill Input Row (tall, clean, matches the photo) */
+.chat-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 36px; /* High radius search bar */
+    padding: 8px 8px 8px 16px;
+    transition: var(--transition-smooth);
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    height: 64px;
+}
+
+.chat-input-row:focus-within {
+    border-color: var(--accent-purple);
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.06);
+}
+
+/* Plus Button (Matches reference photo) */
+.btn-attach {
+    background: #f8fafc;
+    border: none;
+    color: #64748b;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition-smooth);
+    border-radius: 50%;
+}
+
+.btn-attach:hover {
+    background: #f1f5f9;
+    color: var(--accent-purple);
+}
+
+/* Main Input Area */
+.chat-panel-input-container {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.chat-panel-input-container input[type="text"] {
+    flex-grow: 1;
+    border: none !important;
+    background: transparent !important;
+    padding: 0.6rem 0.4rem;
+    font-family: var(--font-luxury);
+    font-size: 1.15rem;
+    outline: none !important;
+    box-shadow: none !important;
+    color: var(--text-main);
+}
+
+.chat-panel-input-container input[type="text"]::placeholder {
+    color: #94a3b8;
+}
+
+/* Microphone Button (Matches reference photo) */
+.btn-mic {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition-smooth);
+    border-radius: 50%;
+}
+
+.btn-mic:hover {
+    background: #f8fafc;
+    color: var(--accent-purple);
+}
+
+/* Send Button inside Solid Circle (Matches reference photo) */
+.btn-send {
+    background: var(--accent-purple);
+    border: none;
+    color: #ffffff;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+    border-radius: 50%;
+}
+
+.btn-send:hover {
+    background: var(--accent-purple-dark);
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   ACTIVE CONVERSATION STATE (Triggers once first message is sent)
+   ========================================================================== */
+
+.chat-active .chat-welcome-title {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    height: 0;
+    margin-bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.chat-active .chat-thread-panel {
+    height: calc(100vh - 230px);
+    opacity: 1;
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   SECURE STAGING VAULT SIDE-PANEL OVERLAY
+   ========================================================================== */
 
 .minimal-chat-layout .staging-vault-panel {
     width: 380px;
     height: 100%;
     background: var(--bg-secondary);
     border-left: 1px solid var(--border-color);
-    position: absolute;
+    position: fixed;
     right: -380px;
     top: 0;
     transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 100;
+    z-index: 1001; /* Display over top actions & footer */
     display: flex !important;
     flex-direction: column;
     box-shadow: none;
@@ -1763,7 +1874,7 @@ main {
 
 .minimal-chat-layout .staging-vault-panel.open {
     right: 0;
-    box-shadow: -10px 0 30px rgba(124, 58, 237, 0.08);
+    box-shadow: -15px 0 35px rgba(124, 58, 237, 0.08);
 }
 
 .minimal-chat-layout .vault-header {
@@ -1801,16 +1912,8 @@ footer {
 
 /* Responsive Vault styles */
 @media (max-width: 900px) {
-    .minimal-header .btn-toggle-vault {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        margin-top: 0.5rem;
-    }
-    
     .minimal-chat-layout .chat-console-container {
-        height: calc(100vh - 210px);
+        height: 100%;
     }
 }
 
@@ -1819,7 +1922,18 @@ footer {
         width: 100%;
         right: -100%;
     }
-    .minimal-header .btn-toggle-vault .btn-text {
+    .top-nav-actions .btn-toggle-vault .btn-text {
         display: inline-block;
     }
+}
+
+/* Drifting Particle Canvas behind everything */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none; /* Let clicks pass through to content! */
 }

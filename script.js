@@ -103,7 +103,6 @@ function renderWelcome() {
     const container = document.getElementById('console-chat-messages');
     if (!container) return;
     container.innerHTML = '';
-    appendConsoleMessageUI('assistant', null, true /* showOptionButtons */);
 }
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
@@ -163,6 +162,9 @@ async function sendConsoleChatMessage() {
     const text = inputField.value.trim();
     if (!text && !consoleAttachedFile) return;
     inputField.value = '';
+
+    // Active state transition (fades welcome title, expands message list)
+    document.getElementById('contact-chat-console')?.classList.add('chat-active');
 
     if (text)              appendConsoleMessageUI('user', text);
     if (consoleAttachedFile) appendConsoleMessageUI('user', `📎 ${consoleAttachedFile.name}`);
@@ -725,6 +727,7 @@ function resetConversation() {
     clearStorage();
     const container = document.getElementById('console-chat-messages');
     if (container) container.innerHTML = '';
+    document.getElementById('contact-chat-console')?.classList.remove('chat-active');
     renderWelcome();
     updateVaultUI();
 }
