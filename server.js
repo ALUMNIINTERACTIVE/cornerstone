@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -64,9 +65,9 @@ function saveDatabase(data) {
     return false;
 }
 
-// Helper: Analyze submissions using local Ollama LLM (Multimodal Vision supported!)
+// Helper: Analyze submissions using Gemini API or local Ollama LLM (Multimodal Vision supported!)
 async function analyzeWithLocalAI(submission, imagePath = null) {
-    console.log(`\n[LOCAL_AI] Ingesting submission ${submission.id} for local LLM risk analysis...`);
+    console.log(`\n[LOCAL_AI] Ingesting submission ${submission.id} for risk analysis...`);
     
     // Check if we have an image to analyze
     let base64Image = null;
@@ -137,8 +138,82 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
     }
     `;
 
-    // Attempt to connect to local Ollama on port 11434
-    // We try to use a Vision model (like llama3.2-vision or llava). If they don't have it, we fallback.
+    // 1. Try Gemini API first if configured
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (GEMINI_API_KEY) {
+        try {
+            console.log(`[GEMINI_AI] Attempting connection to Gemini API for structured risk analysis...`);
+            
+            const contents = [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: prompt }
+                    ]
+                }
+            ];
+
+            if (base64Image) {
+                const ext = path.extname(imagePath).toLowerCase();
+                const mimeType = ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+                contents[0].parts.push({
+                    inlineData: {
+                        mimeType: mimeType,
+                        data: base64Image
+                    }
+                });
+                console.log(`[GEMINI_AI] Attaching Base64 image data to Gemini payload.`);
+            }
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: contents,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                verified: { type: "BOOLEAN", description: "Whether the document is valid or details are clear" },
+                                inquirySummary: { type: "STRING", description: "A concise 2-sentence summary of the request" },
+                                riskProfile: { type: "STRING", enum: ["Low", "Medium", "High"], description: "Risk profile rating" },
+                                recommendedCoverageLimits: { type: "STRING", description: "Specific limit recommendation, e.g. $1,000,000 General Liability" },
+                                followUpQuestions: { 
+                                    type: "ARRAY", 
+                                    items: { type: "STRING" },
+                                    description: "Two tailored follow-up questions" 
+                                }
+                            },
+                            required: ["verified", "inquirySummary", "riskProfile", "recommendedCoverageLimits", "followUpQuestions"]
+                        }
+                    }
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts[0]) {
+                    const aiResponseText = result.candidates[0].content.parts[0].text.trim();
+                    console.log(`[GEMINI_AI] Successfully received Gemini API response.`);
+                    try {
+                        const parsedVerdict = JSON.parse(aiResponseText);
+                        console.log(`[GEMINI_AI] Successfully parsed structured JSON verdict from Gemini.`);
+                        return parsedVerdict;
+                    } catch (parseErr) {
+                        console.warn(`[GEMINI_AI] Failed parsing JSON from raw Gemini response:`, aiResponseText);
+                    }
+                }
+            } else {
+                const errText = await response.text();
+                console.error(`[GEMINI_AI] API call failed:`, errText);
+            }
+        } catch (geminiErr) {
+            console.error(`[GEMINI_AI] Error contacting Gemini API:`, geminiErr);
+        }
+    }
+
+    // 2. Fall back to local Ollama on port 11434
     const modelsToTry = ['llama3.2-vision', 'llava', 'qwen2-vl', 'llama3:8b-instruct-q4_K_M', 'llama3'];
     
     for (const model of modelsToTry) {
@@ -151,7 +226,6 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
                 stream: false
             };
             
-            // Add base64 image if available and model is multimodal
             if (base64Image && ['llama3.2-vision', 'llava', 'qwen2-vl'].includes(model)) {
                 payload.images = [base64Image];
                 console.log(`[LOCAL_AI] Attaching Base64 image track to multimodal ${model} payload...`);
@@ -173,7 +247,6 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
                     return parsedVerdict;
                 } catch (parseErr) {
                     console.warn(`[LOCAL_AI] Failed parsing JSON from raw LLM text:`, aiResponseText);
-                    // Extract JSON substring if wrapped in markdown or conversation blocks
                     const match = aiResponseText.match(/\{[\s\S]*\}/);
                     if (match) {
                         try {
@@ -270,7 +343,86 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
         ...messages
     ];
 
-    // Try standard instruct models
+    // 1. Try Gemini API first if configured
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (GEMINI_API_KEY) {
+        try {
+            console.log(`[GEMINI_AI] Processing concierge chat with Gemini 1.5 Flash...`);
+            
+            let chatImagePart = null;
+            if (req.file && fs.existsSync(req.file.path)) {
+                try {
+                    const fileBuffer = fs.readFileSync(req.file.path);
+                    const base64Image = fileBuffer.toString('base64');
+                    const ext = path.extname(req.file.path).toLowerCase();
+                    const mimeType = ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+                    chatImagePart = {
+                        inlineData: {
+                            mimeType: mimeType,
+                            data: base64Image
+                        }
+                    };
+                    console.log(`[GEMINI_AI] Loaded chat attachment image for multimodal processing.`);
+                } catch (e) {
+                    console.error("[GEMINI_AI] Failed to read chat upload image for base64 conversion:", e);
+                }
+            }
+
+            const contents = [];
+            for (let i = 0; i < messages.length; i++) {
+                const msg = messages[i];
+                if (msg.role === 'system') continue;
+                
+                const role = msg.role === 'assistant' ? 'model' : 'user';
+                const parts = [{ text: msg.content || "" }];
+                
+                // Attach image to the very last user message in history
+                if (i === messages.length - 1 && role === 'user' && chatImagePart) {
+                    parts.push(chatImagePart);
+                }
+                
+                contents.push({ role, parts });
+            }
+
+            if (contents.length === 0) {
+                const parts = [{ text: "Hello" }];
+                if (chatImagePart) {
+                    parts.push(chatImagePart);
+                }
+                contents.push({ role: 'user', parts });
+            }
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: contents,
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    }
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts[0]) {
+                    let reply = result.candidates[0].content.parts[0].text;
+                    console.log(`[GEMINI_AI] Received chat reply from Gemini.`);
+                    if (req.file) {
+                        reply = `[Telemetry Document Ingested: ${req.file.originalname}]\n\n` + reply;
+                    }
+                    return res.json({ success: true, reply: reply });
+                }
+            } else {
+                const errText = await response.text();
+                console.error(`[GEMINI_AI] Chat API call failed:`, errText);
+            }
+        } catch (geminiErr) {
+            console.error(`[GEMINI_AI] Error contacting Gemini Chat API:`, geminiErr);
+        }
+    }
+
+    // 2. Try standard local instruct models
     const modelsToTry = ['llama3:8b-instruct-q4_K_M', 'llama3', 'llava', 'llama3.2-vision'];
     
     for (const model of modelsToTry) {
