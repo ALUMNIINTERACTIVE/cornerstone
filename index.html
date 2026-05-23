@@ -111,16 +111,31 @@
                     </div>
                 </div>
                 
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for contacting Cornerstone. An advisor will reach out shortly.');">
-                    <h3>Secure Consultation Request</h3>
+                <form class="contact-form" id="portal-form">
+                    <div class="form-tabs">
+                        <button type="button" class="form-tab-btn active" id="tab-consultation" onclick="switchFormType('consultation')">Consultation</button>
+                        <button type="button" class="form-tab-btn" id="tab-policy-change" onclick="switchFormType('policy_change')">Policy Change</button>
+                    </div>
+                    
+                    <input type="hidden" name="type" id="form-type-field" value="consultation">
+                    
+                    <h3 id="form-title">Secure Consultation Request</h3>
+                    
                     <div class="form-group">
-                        <input type="text" placeholder="Full Name" required>
+                        <input type="text" name="name" placeholder="Full Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" name="email" placeholder="Email Address" required>
                     </div>
-                    <div class="form-group">
-                        <select required>
+                    
+                    <!-- Policy Number (visible only on Policy Change) -->
+                    <div class="form-group hidden" id="policy-number-group">
+                        <input type="text" name="policyNumber" placeholder="Policy Number (e.g. CS-12345-LA)">
+                    </div>
+                    
+                    <!-- Service Selection (visible on Consultation) -->
+                    <div class="form-group" id="service-select-group">
+                        <select name="service" id="service-select">
                             <option value="" disabled selected>Select Service Interest</option>
                             <option value="auto">Auto Insurance</option>
                             <option value="home">Home & Property</option>
@@ -129,17 +144,63 @@
                             <option value="health">Health Insurance</option>
                         </select>
                     </div>
+                    
                     <div class="form-group">
-                        <textarea rows="4" placeholder="Brief Details of Inquiry..." required></textarea>
+                        <textarea rows="4" name="details" id="details-textarea" placeholder="Brief Details of Inquiry..." required></textarea>
                     </div>
-                    <button type="submit" class="btn-submit">Submit Request</button>
+                    
+                    <!-- Drag and Drop document upload zone -->
+                    <div class="form-group">
+                        <div class="drag-drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p id="drop-text">Drag & drop document image here or click to browse</p>
+                            <input type="file" id="file-input" name="document" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                            <div id="file-preview-capsule" class="hidden" onclick="event.stopPropagation()">
+                                <i class="fa-solid fa-file-image"></i>
+                                <span id="file-preview-name">preview.jpg</span>
+                                <button type="button" class="remove-file-btn" onclick="clearAttachedFile()">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit" id="submit-btn">Submit Secure Request</button>
                 </form>
             </div>
         </section>
     </main>
     
+    <!-- Embedded Local AI Concierge Chat Widget -->
+    <div class="chat-widget-trigger" id="chat-trigger" onclick="toggleChatWidget()">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span class="chat-pulse"></span>
+    </div>
+    
+    <div class="chat-widget hidden" id="chat-widget">
+        <div class="chat-widget-header">
+            <div class="chat-brand">
+                <i class="fa-solid fa-cube"></i>
+                <div>
+                    <h4>CORNERSTONE</h4>
+                    <span>Offline GPU AI Concierge</span>
+                </div>
+            </div>
+            <button class="close-chat-btn" onclick="toggleChatWidget()">&times;</button>
+        </div>
+        <div class="chat-widget-messages" id="chat-messages">
+            <div class="chat-message assistant">
+                <p>How may I assist you today?</p>
+            </div>
+        </div>
+        <div class="chat-widget-input">
+            <input type="text" id="chat-input-field" placeholder="Ask local AI advisor..." onkeydown="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    
     <footer>
         <p>&copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection.</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
