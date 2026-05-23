@@ -1631,10 +1631,10 @@ footer p {
 
 .minimal-header .logo {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 6px;
     margin-bottom: 0.2rem;
 }
 
@@ -1642,28 +1642,9 @@ footer p {
     font-size: 1.6rem;
 }
 
-.minimal-header .logo-text {
-    align-items: flex-start;
-    text-align: left;
-}
-
 .minimal-header .logo h1 {
     font-size: 1.4rem;
     letter-spacing: 0.1em;
-}
-
-.minimal-header .logo-sub {
-    font-size: 0.55rem;
-    letter-spacing: 0.35em;
-    margin-top: 1px;
-}
-
-.minimal-header .subtitle {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
 }
 
 .top-nav-actions {
