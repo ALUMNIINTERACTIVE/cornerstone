@@ -932,10 +932,135 @@
                 justify-content: center;
             }
         }
+
+        /* Password Gate Overlay */
+        .password-gate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-obsidian);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+
+        .password-gate-card {
+            background: var(--bg-carbon-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--border-radius);
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(124, 58, 237, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .password-gate-card h2 {
+            font-family: var(--font-luxury);
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            letter-spacing: 0.05em;
+        }
+
+        .password-gate-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .gateway-icon {
+            font-size: 3.5rem;
+            color: var(--accent-purple-light);
+            text-shadow: 0 0 20px var(--accent-purple);
+            margin-bottom: 1.5rem;
+            animation: cubePulse 4s ease-in-out infinite;
+        }
+
+        .password-gate-card .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .password-gate-card input[type="password"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            padding: 0.9rem 1.2rem;
+            color: var(--text-light);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition-premium);
+            text-align: center;
+            letter-spacing: 0.15em;
+        }
+
+        .password-gate-card input[type="password"]:focus {
+            border-color: var(--border-glass-hover);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.15);
+        }
+
+        .password-gate-card button {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: var(--accent-purple-dark);
+            color: white;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--border-radius);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            font-family: var(--font-luxury);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(91, 33, 182, 0.15);
+            transition: var(--transition-premium);
+        }
+
+        .password-gate-card button:hover {
+            background-color: var(--accent-purple);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .gate-error {
+            color: var(--color-high);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            text-shadow: 0 0 5px rgba(236, 72, 153, 0.4);
+        }
     </style>
 </head>
 <body>
-    <header>
+    <!-- Secure Access Password Gate -->
+    <div id="password-gate" class="password-gate-overlay">
+        <div class="password-gate-card">
+            <i class="fa-solid fa-shield-halved gateway-icon"></i>
+            <h2>Secure Access Gateway</h2>
+            <p>Cornerstone Agent Ingestion Portal</p>
+            <div class="input-group">
+                <input type="password" id="gate-password-input" placeholder="Enter Access Code" onkeydown="if(event.key === 'Enter') verifyGatePassword()">
+                <button onclick="verifyGatePassword()">Authorize</button>
+            </div>
+            <div id="gate-error-message" class="gate-error">Invalid security credentials.</div>
+        </div>
+    </div>
+
+    <header style="display: none;">
         <div class="header-container">
             <div class="logo">
                 <i class="fa-solid fa-cube"></i>
@@ -953,7 +1078,7 @@
         </div>
     </header>
 
-    <main>
+    <main style="display: none;">
         <!-- Metrics Summary Dashboard -->
         <div class="metrics-grid">
             <div class="metric-card">
@@ -1022,13 +1147,57 @@
             }
         } catch(e) {}
 
+        function checkGateAuthorization() {
+            if (sessionStorage.getItem('cornerstone_admin_authorized') === 'true') {
+                // Instantly hide gate and show content
+                document.getElementById('password-gate').style.display = 'none';
+                document.querySelector('header').style.display = 'block';
+                document.querySelector('main').style.display = 'block';
+                fetchSubmissions();
+            } else {
+                document.getElementById('password-gate').style.display = 'flex';
+                document.querySelector('header').style.display = 'none';
+                document.querySelector('main').style.display = 'none';
+                document.getElementById('gate-password-input').focus();
+            }
+        }
+
+        function verifyGatePassword() {
+            const passwordInput = document.getElementById('gate-password-input');
+            const errorMsg = document.getElementById('gate-error-message');
+            
+            if (passwordInput.value === '00000000') {
+                // Correct password!
+                sessionStorage.setItem('cornerstone_admin_authorized', 'true');
+                errorMsg.style.display = 'none';
+                
+                // Animate transition
+                const gate = document.getElementById('password-gate');
+                gate.style.opacity = '0';
+                
+                setTimeout(() => {
+                    gate.style.display = 'none';
+                    document.querySelector('header').style.display = 'block';
+                    document.querySelector('main').style.display = 'block';
+                    fetchSubmissions();
+                }, 500);
+            } else {
+                // Incorrect password
+                errorMsg.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+
         // Initial setup on window load
         window.addEventListener('DOMContentLoaded', () => {
-            fetchSubmissions();
+            checkGateAuthorization();
             
             // Auto refresh submissions every 30 seconds
             setInterval(() => {
-                fetchSubmissions(true);
+                if (sessionStorage.getItem('cornerstone_admin_authorized') === 'true') {
+                    fetchSubmissions(true);
+                }
             }, 30000);
         });
 
