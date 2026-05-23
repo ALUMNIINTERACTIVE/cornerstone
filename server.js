@@ -269,6 +269,17 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
 // REST API ENDPOINTS
 // -------------------------------------------------------------
 
+// 0. Verify admin authorization passcode (Hidden from Git)
+app.post('/api/verify-admin', (req, res) => {
+    const { passcode } = req.body;
+    const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || '00000000';
+    if (passcode === ADMIN_PASSCODE) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, error: "Invalid passcode" });
+    }
+});
+
 // 1. Get all submissions (Admin Inbox portal)
 app.get('/api/submissions', (req, res) => {
     const db = loadDatabase();

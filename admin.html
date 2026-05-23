@@ -1162,26 +1162,37 @@
             }
         }
 
-        function verifyGatePassword() {
+        async function verifyGatePassword() {
             const passwordInput = document.getElementById('gate-password-input');
             const errorMsg = document.getElementById('gate-error-message');
-            
-            if (passwordInput.value === '00000000') {
-                // Correct password!
-                sessionStorage.setItem('cornerstone_admin_authorized', 'true');
-                errorMsg.style.display = 'none';
-                
-                // Animate transition
-                const gate = document.getElementById('password-gate');
-                gate.style.opacity = '0';
-                
-                setTimeout(() => {
-                    gate.style.display = 'none';
-                    document.querySelector('header').style.display = 'block';
-                    document.querySelector('main').style.display = 'block';
-                    fetchSubmissions();
-                }, 500);
-            } else {
+            const passcode = passwordInput.value;
+
+            try {
+                const response = await fetch('/api/verify-admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passcode })
+                });
+
+                if (response.ok) {
+                    // Correct password!
+                    sessionStorage.setItem('cornerstone_admin_authorized', 'true');
+                    errorMsg.style.display = 'none';
+                    
+                    // Animate transition
+                    const gate = document.getElementById('password-gate');
+                    gate.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        gate.style.display = 'none';
+                        document.querySelector('header').style.display = 'block';
+                        document.querySelector('main').style.display = 'block';
+                        fetchSubmissions();
+                    }, 500);
+                } else {
+                    throw new Error("unauthorized");
+                }
+            } catch (e) {
                 // Incorrect password
                 errorMsg.style.display = 'block';
                 passwordInput.value = '';
