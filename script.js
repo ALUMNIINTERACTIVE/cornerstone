@@ -653,7 +653,7 @@ function appendConsoleMessageUI(role, text, showOptionButtons = false) {
     if (showOptionButtons) {
         const p = document.createElement('p');
         p.style.whiteSpace = 'pre-line';
-        p.innerText = `Hello! Welcome to Cornerstone Insurance Firm.\n\nI'm Khalil — your dedicated insurance specialist.\n\nHow can I assist you today?`;
+        p.innerText = `Hello! Welcome to Cornerstone Insurance Firm.\n\nI'm Khalil — your dedicated insurance specialist.\n\nHow may I assist you today?`;
         msg.appendChild(p);
 
         const opts = document.createElement('div');
@@ -668,7 +668,7 @@ function appendConsoleMessageUI(role, text, showOptionButtons = false) {
         const btn2 = document.createElement('button');
         btn2.className = 'chat-option-btn';
         btn2.setAttribute('data-service', 'policy_change');
-        btn2.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Policy Change';
+        btn2.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Update Policy';
         btn2.onclick = () => selectService('policy_change');
 
         opts.appendChild(btn1);
