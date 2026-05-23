@@ -97,13 +97,15 @@ header::before {
     font-size: 2.2rem;
     font-weight: 500;
     letter-spacing: 0.15em;
+    margin-right: -0.15em;
     color: var(--text-main);
     line-height: 1.1;
 }
 
 .logo-sub {
-    font-size: 0.75rem;
-    letter-spacing: 0.35em;
+    font-size: 0.65rem;
+    letter-spacing: 0.58em;
+    margin-right: -0.58em;
     text-transform: uppercase;
     color: var(--accent-purple-dark);
     margin-top: 2px;
