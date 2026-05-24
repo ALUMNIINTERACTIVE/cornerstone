@@ -254,6 +254,19 @@ async function sendConsoleChatMessage() {
 
     // 1. If in Phase 2 (Logged In), handle document and telemetry ingestion conversationally
     if (loggedInClient && chatStep === STEP.PHASE2) {
+        if (consoleAttachedFile) {
+            const lowerText = text.toLowerCase();
+            const lowerFileName = consoleAttachedFile.name.toLowerCase();
+            if (lowerText.includes('license') || lowerText.includes('driver') || lowerText.includes('dl') ||
+                lowerFileName.includes('license') || lowerFileName.includes('driver') || lowerFileName.includes('dl')) {
+                await stageClientDocument('license');
+                return;
+            } else if (lowerText.includes('vin') || lowerText.includes('car') || lowerText.includes('vehicle') ||
+                       lowerFileName.includes('vin') || lowerFileName.includes('car') || lowerFileName.includes('vehicle')) {
+                await stageClientDocument('vin');
+                return;
+            }
+        }
         await processPhase2Dialogue(text);
         return;
     }
@@ -393,22 +406,92 @@ async function processPhase2Dialogue(text) {
         await submitPortalUpdateMessage(text);
     }
 
-    // Direct conversational inputs for EIN or Business Name
-    const einMatch = text.match(/\b\d{2}-\d{7}\b/) || text.match(/\b\d{9}\b/);
-    if (einMatch) {
-        let ein = einMatch[0];
-        if (ein.length === 9 && !ein.includes('-')) {
-            ein = ein.slice(0,2) + '-' + ein.slice(2);
+    // Smart EIN Conversational updates
+    const einMatchReg = /(?:update|change|edit|set)\s+(?:my\s+)?ein\s+(?:to\s+)?([\d-]{9,10})/i;
+    const einMatchReg2 = /(?:my\s+)?ein\s+(?:is|to|equals|changed\s+to|updated\s+to)\s*([\d-]{9,10})/i;
+    let matchedEin = null;
+    let einM;
+    if (einM = text.match(einMatchReg)) {
+        matchedEin = einM[1];
+    } else if (einM = text.match(einMatchReg2)) {
+        matchedEin = einM[1];
+    } else {
+        const rawEinM = text.match(/\b\d{2}-\d{7}\b/) || text.match(/\b\d{9}\b/);
+        if (rawEinM) matchedEin = rawEinM[0];
+    }
+    if (matchedEin) {
+        let ein = matchedEin.replace(/\D/g, '');
+        if (ein.length === 9) {
+            ein = ein.slice(0, 2) + '-' + ein.slice(2);
+            vaultState.ein = ein;
+            if (loggedInClient) loggedInClient.ein = ein;
+            await updateTelemetryOnServer();
+            showPortalNotification('✔️ EIN updated securely.');
         }
-        vaultState.ein = ein;
-        await updateTelemetryOnServer();
     }
 
-    // Conversational business name detection
-    if (lower.startsWith('my business is') || lower.startsWith('business name is') || lower.includes('company is') || lower.includes('llc') || lower.includes('inc') || lower.includes('transport')) {
-        let bName = text.replace(/my business is|business name is|company is/gi, '').trim();
-        vaultState.businessName = bName;
-        await updateTelemetryOnServer();
+    // Smart Phone Conversational updates
+    const phoneMatchReg = /(?:update|change|edit|set)\s+(?:my\s+)?(?:phone|phone\s+number|number|cell|mobile)\s+(?:to\s+)?([\d\s\(\)-]{10,20})/i;
+    const phoneMatchReg2 = /(?:my\s+)?(?:phone|phone\s+number|number|cell|mobile)\s+(?:is|to|equals|changed\s+to|updated\s+to)\s*([\d\s\(\)-]{10,20})/i;
+    let matchedPhone = null;
+    let phoneM;
+    if (phoneM = text.match(phoneMatchReg)) {
+        matchedPhone = phoneM[1];
+    } else if (phoneM = text.match(phoneMatchReg2)) {
+        matchedPhone = phoneM[1];
+    }
+    if (matchedPhone) {
+        const formattedPhone = extractPhone(matchedPhone);
+        if (formattedPhone) {
+            vaultState.phone = formattedPhone;
+            if (loggedInClient) loggedInClient.phone = formattedPhone;
+            await updateTelemetryOnServer();
+            showPortalNotification('✔️ Phone number updated securely.');
+        }
+    }
+
+    // Smart Effective Date Conversational updates
+    const dateMatchReg = /(?:update|change|edit|set)\s+(?:my\s+)?(?:effective\s+)?date\s+(?:to\s+)?([\d\/\s-]{8,15})/i;
+    const dateMatchReg2 = /(?:my\s+)?(?:effective\s+)?date\s+(?:is|to|equals|changed\s+to|updated\s+to)\s*([\d\/\s-]{8,15})/i;
+    let matchedDate = null;
+    let dateM;
+    if (dateM = text.match(dateMatchReg)) {
+        matchedDate = dateM[1].trim();
+    } else if (dateM = text.match(dateMatchReg2)) {
+        matchedDate = dateM[1].trim();
+    }
+    if (matchedDate) {
+        let cleanDate = matchedDate.replace(/[\s-]/g, '/');
+        if (validateDateMDY(cleanDate)) {
+            vaultState.effectiveDate = cleanDate;
+            if (loggedInClient) loggedInClient.effectiveDate = cleanDate;
+            await updateTelemetryOnServer();
+            showPortalNotification('✔️ Effective date updated securely.');
+        }
+    }
+
+    // Smart Business Name Conversational updates
+    const bizMatchReg = /(?:update|change|edit|set)\s+(?:my\s+)?(?:business|business\s+name|company|company\s+name)\s+(?:to\s+)?(.*)/i;
+    const bizMatchReg2 = /(?:my\s+)?(?:business|business\s+name|company|company\s+name)\s+(?:is|to|equals|changed\s+to|updated\s+to)\s*(.*)/i;
+    let matchedBiz = null;
+    let bizM;
+    if (bizM = text.match(bizMatchReg)) {
+        matchedBiz = bizM[1].trim();
+    } else if (bizM = text.match(bizMatchReg2)) {
+        matchedBiz = bizM[1].trim();
+    } else {
+        if (lower.startsWith('my business is') || lower.startsWith('business name is') || lower.includes('company is') || lower.includes('llc') || lower.includes('inc') || lower.includes('transport')) {
+            matchedBiz = text.replace(/my business is|business name is|company is/gi, '').trim();
+        }
+    }
+    if (matchedBiz) {
+        matchedBiz = matchedBiz.replace(/^["'\s]+|["'\s?.]+$/g, '').trim();
+        if (matchedBiz) {
+            vaultState.businessName = matchedBiz;
+            if (loggedInClient) loggedInClient.businessName = matchedBiz;
+            await updateTelemetryOnServer();
+            showPortalNotification('✔️ Business name updated securely.');
+        }
     }
 
     // Call backend Gemini/local AI for full conversational richness (keeps track of what info is provided and pushes for missing)
@@ -701,6 +784,8 @@ async function updateTelemetryOnServer() {
     fd.append('clientId', loggedInClient.id);
     if (vaultState.ein) fd.append('ein', vaultState.ein);
     if (vaultState.businessName) fd.append('businessName', vaultState.businessName);
+    if (vaultState.phone) fd.append('phone', vaultState.phone);
+    if (vaultState.effectiveDate) fd.append('effectiveDate', vaultState.effectiveDate);
 
     try {
         const response = await fetch('/api/clients/update-telemetry', {

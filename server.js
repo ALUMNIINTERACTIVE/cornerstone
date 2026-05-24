@@ -113,7 +113,10 @@ function loadDatabase() {
     try {
         if (fs.existsSync(DB_FILE)) {
             const data = fs.readFileSync(DB_FILE, 'utf8');
-            return JSON.parse(data || '[]');
+            let db = JSON.parse(data || '[]');
+            // Filter out dev@alumniinteractive.com dynamically as requested
+            db = db.filter(item => !item.email || item.email.toLowerCase() !== 'dev@alumniinteractive.com');
+            return db;
         }
     } catch (e) {
         console.error("❌ Failed to load submissions database:", e);
@@ -511,7 +514,7 @@ app.post('/api/clients/update-telemetry', upload.fields([
     { name: 'driversLicense', maxCount: 1 },
     { name: 'vin', maxCount: 1 }
 ]), (req, res) => {
-    const { clientId, ein, businessName } = req.body;
+    const { clientId, ein, businessName, phone, effectiveDate } = req.body;
     if (!clientId) {
         return res.status(400).json({ error: "Missing client identifier." });
     }
@@ -524,6 +527,8 @@ app.post('/api/clients/update-telemetry', upload.fields([
 
     if (ein) client.ein = ein;
     if (businessName) client.businessName = businessName;
+    if (phone) client.phone = phone;
+    if (effectiveDate) client.effectiveDate = effectiveDate;
 
     if (req.files) {
         if (req.files.driversLicense && req.files.driversLicense[0]) {
@@ -628,6 +633,64 @@ app.post('/api/clients/submit-update', (req, res) => {
     });
 });
 
+
+// Send drafted reply via SMTP email (formatted as Do Not Reply with exact drafted contents)
+app.post('/api/submissions/send-reply', async (req, res) => {
+    const { id, replyText } = req.body;
+    if (!id || !replyText) {
+        return res.status(400).json({ error: "Missing submission ID or reply text." });
+    }
+
+    try {
+        const db = loadDatabase();
+        const submission = db.find(s => s.id === id);
+        if (!submission) {
+            return res.status(404).json({ error: "Submission not found." });
+        }
+
+        // Format the email body beautifully with a premium secure template
+        const formattedEmailHtml = `
+            <div style="font-family: 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #f1ecfe; background-color: #ffffff; color: #1e1b4b; line-height: 1.8; border-radius: 4px;">
+                <div style="text-align: center; border-bottom: 2px solid #7c3aed; padding-bottom: 20px; margin-bottom: 25px;">
+                    <h2 style="margin: 0; color: #7c3aed; letter-spacing: 0.15em; font-weight: 500;">CORNERSTONE</h2>
+                    <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4em; color: #5b21b6;">Insurance Firm</span>
+                </div>
+                
+                <div style="background-color: #faf9fe; border-left: 3px solid #7c3aed; padding: 12px 18px; margin-bottom: 25px; font-size: 0.85rem; color: #475569; font-style: italic; border-radius: 2px;">
+                    <strong>SECURITY NOTICE:</strong> This is a secure automated transmission. Please do not reply directly to this message.
+                </div>
+                
+                <div style="font-size: 1.05rem; color: #1e1b4b; margin-bottom: 35px; white-space: pre-line; letter-spacing: 0.01em;">
+                    ${replyText}
+                </div>
+                
+                <div style="border-top: 1px solid #f1ecfe; padding-top: 20px; font-size: 0.8rem; color: #94a3b8; text-align: center;">
+                    &copy; 2026 Cornerstone Insurance Firm. All rights reserved.<br>
+                    9029 Jefferson Hwy, New Orleans, LA | 844-345-6765
+                </div>
+            </div>
+        `;
+
+        const mailOptions = {
+            from: process.env.SMTP_FROM || '"Cornerstone Insurance Firm" <info@chatcif.com>',
+            to: submission.email,
+            subject: `[Secure Portal Response] Cornerstone Client Update`,
+            html: formattedEmailHtml
+        };
+        
+        if (mailTransporter) {
+            await mailTransporter.sendMail(mailOptions);
+            console.log(`[EMAIL] Successfully sent drafted response to ${submission.email}`);
+        } else {
+            console.warn(`[EMAIL] Mail transporter offline. Logging drafted email content:\nTo: ${submission.email}\nContent: ${replyText}`);
+        }
+        
+        res.json({ success: true });
+    } catch(e) {
+        console.error("❌ Failed to send drafted response email:", e);
+        res.status(500).json({ error: "Failed to dispatch email securely. Check server logs." });
+    }
+});
 
 // 1. Get all submissions (Admin Inbox portal)
 app.get('/api/submissions', (req, res) => {

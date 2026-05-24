@@ -1043,6 +1043,140 @@
             display: none;
             text-shadow: 0 0 5px rgba(236, 72, 153, 0.4);
         }
+
+        /* Premium Document Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 4, 14, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .preview-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .preview-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .preview-modal.open .preview-modal-content {
+            transform: scale(1);
+        }
+        .preview-modal-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            object-fit: contain;
+        }
+        .preview-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: var(--text-light);
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: var(--transition-premium);
+            opacity: 0.8;
+            user-select: none;
+        }
+        .preview-modal-close:hover {
+            color: var(--accent-purple-light);
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        .preview-modal-actions {
+            display: flex;
+            justify-content: center;
+        }
+        .btn-download-modal {
+            background: var(--accent-purple);
+            border: 1px solid var(--accent-purple);
+            color: var(--text-light);
+            padding: 0.6rem 1.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-premium);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+        }
+        .btn-download-modal:hover {
+            background: var(--accent-purple-light);
+            border-color: var(--accent-purple-light);
+            box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Autocomplete Suggestions Dropdown */
+        .search-suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--bg-carbon);
+            border: 1px solid var(--border-glass-hover);
+            border-radius: var(--border-radius);
+            margin-top: 5px;
+            z-index: 1000;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(124, 58, 237, 0.15);
+            display: none;
+        }
+        .search-suggestions-dropdown.open {
+            display: block;
+        }
+        .suggestion-item {
+            padding: 0.8rem 1.2rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition-premium);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        .suggestion-item:hover {
+            background: rgba(124, 58, 237, 0.12);
+            color: var(--text-purple);
+        }
+        .suggestion-type {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -1071,7 +1205,7 @@
             </div>
             <div class="header-actions">
                 <div class="system-badge">
-                    <span></span> Local GPU Node Active
+                    <span></span> GPU Node Active
                 </div>
                 <a href="index.html" class="btn-portal"><i class="fa-solid fa-house"></i> Client Portal</a>
             </div>
@@ -1084,7 +1218,7 @@
             <div class="metric-card">
                 <i class="fa-solid fa-inbox metric-icon"></i>
                 <div class="metric-value" id="metric-total">0</div>
-                <div class="metric-label">Total Secure Submissions</div>
+                <div class="metric-label">Submissions For Review</div>
             </div>
             <div class="metric-card">
                 <i class="fa-solid fa-file-shield metric-icon"></i>
@@ -1112,11 +1246,12 @@
             </div>
             
             <div class="search-refresh">
-                <div class="search-container">
+                <div class="search-container" style="position: relative;">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search-input" placeholder="Search by name, email, or keywords..." oninput="applyFiltersAndSearch()">
+                    <input type="text" id="search-input" placeholder="Search by name, email, or keywords..." oninput="handleSearchInput(event)" autocomplete="off">
+                    <div id="search-suggestions" class="search-suggestions-dropdown"></div>
                 </div>
-                <button class="btn-refresh" id="refresh-btn" onclick="fetchSubmissions()" title="Refresh Local Database">
+                <button class="btn-refresh" id="refresh-btn" onclick="refreshSearch()" title="Refresh Search Database">
                     <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
@@ -1249,10 +1384,28 @@
             const policyChanges = submissionsList.filter(s => s.type === 'policy_change').length;
             const consultations = submissionsList.filter(s => s.type === 'consultation').length;
             
-            const verified = submissionsList.filter(s => s.aiVerdict && s.aiVerdict.verified).length;
-            const verifiedRate = total > 0 ? Math.round((verified / total) * 100) : 100;
+            // Submissions For Review count represents unchecked (unacknowledged) submissions
+            const uncheckedCount = submissionsList.filter(s => !acknowledgedIds.has(s.id)).length;
             
-            animateValue("metric-total", total);
+            // Completeness rate across new client request profiles based on 7 required fields
+            const clients = submissionsList.filter(s => s.type === 'new_client_request');
+            let verifiedRate = 100;
+            if (clients.length > 0) {
+                const totalCompleteness = clients.reduce((acc, client) => {
+                    let completedCount = 0;
+                    if (client.email) completedCount++;
+                    if (client.phone) completedCount++;
+                    if (client.effectiveDate) completedCount++;
+                    if (client.businessName) completedCount++;
+                    if (client.ein) completedCount++;
+                    if (client.driversLicense) completedCount++;
+                    if (client.vin) completedCount++;
+                    return acc + (completedCount / 7) * 100;
+                }, 0);
+                verifiedRate = Math.round(totalCompleteness / clients.length);
+            }
+            
+            animateValue("metric-total", uncheckedCount);
             animateValue("metric-policy", policyChanges);
             animateValue("metric-consultation", consultations);
             
@@ -1389,12 +1542,12 @@
                         const dlFilename = submission.driversLicense.split('/').pop();
                         documentHtml += `
                             <div class="document-block" style="margin-top: 10px;">
-                                <div class="doc-info">
+                                <div class="doc-info" style="cursor: pointer;" onclick="showDocumentPreview('${submission.driversLicense}')" title="Click to preview Owner's Driver's License">
                                     <i class="fa-solid fa-address-card" style="color: var(--accent-purple-light); font-size: 1.4rem;"></i>
-                                    <span class="doc-name">Owner's Driver's License: ${dlFilename}</span>
+                                    <span class="doc-name" style="text-decoration: underline;">Owner's Driver's License: ${dlFilename}</span>
                                 </div>
-                                <a href="${submission.driversLicense}" target="_blank" class="btn-download" download>
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest Photo
+                                <a href="${submission.driversLicense}" class="btn-download" download title="Download Document">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i>
                                 </a>
                             </div>
                         `;
@@ -1403,12 +1556,12 @@
                         const vinFilename = submission.vin.split('/').pop();
                         documentHtml += `
                             <div class="document-block" style="margin-top: 8px;">
-                                <div class="doc-info">
+                                <div class="doc-info" style="cursor: pointer;" onclick="showDocumentPreview('${submission.vin}')" title="Click to preview Vehicle VIN # Photo">
                                     <i class="fa-solid fa-car-rear" style="color: var(--accent-purple-light); font-size: 1.4rem;"></i>
-                                    <span class="doc-name">Vehicle VIN # Photo: ${vinFilename}</span>
+                                    <span class="doc-name" style="text-decoration: underline;">Vehicle VIN # Photo: ${vinFilename}</span>
                                 </div>
-                                <a href="${submission.vin}" target="_blank" class="btn-download" download>
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest Photo
+                                <a href="${submission.vin}" class="btn-download" download title="Download Document">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i>
                                 </a>
                             </div>
                         `;
@@ -1418,12 +1571,12 @@
                         const filename = submission.document.split('/').pop();
                         documentHtml = `
                             <div class="document-block">
-                                <div class="doc-info">
+                                <div class="doc-info" style="cursor: pointer;" onclick="showDocumentPreview('${submission.document}')" title="Click to preview Document">
                                     <i class="fa-solid fa-file-image"></i>
-                                    <span class="doc-name">${filename}</span>
+                                    <span class="doc-name" style="text-decoration: underline;">${filename}</span>
                                 </div>
-                                <a href="${submission.document}" target="_blank" class="btn-download" download>
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest
+                                <a href="${submission.document}" class="btn-download" download title="Download Document">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i>
                                 </a>
                             </div>
                         `;
@@ -1462,7 +1615,10 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 5px;">
                             <div class="detail-item">
                                 <div class="detail-label">Client Phone</div>
-                                <div class="detail-value"><i class="fa-solid fa-phone" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${escapeHtml(submission.phone || 'N/A')}</div>
+                                <div class="detail-value">
+                                    <i class="fa-solid fa-phone" style="color: var(--accent-purple-light); margin-right: 6px;"></i>
+                                    <a href="tel:${escapeHtml(submission.phone || '')}" style="color: inherit; text-decoration: underline;">${escapeHtml(submission.phone || 'N/A')}</a>
+                                </div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Effective Date</div>
@@ -1481,10 +1637,10 @@
                         <div class="detail-item" style="margin-top: 15px;">
                             <div class="detail-label">Onboarding Document Status Checklist</div>
                             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;">
-                                <span class="risk-badge ${submission.businessName ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Business Name: ${submission.businessName ? '✓ Set' : '✗ Awaiting'}</span>
-                                <span class="risk-badge ${submission.ein ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">EIN: ${submission.ein ? '✓ Set' : '✗ Awaiting'}</span>
-                                <span class="risk-badge ${submission.driversLicense ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Driver's License: ${submission.driversLicense ? '✓ Ingested' : '✗ Awaiting'}</span>
-                                <span class="risk-badge ${submission.vin ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">VIN Photo: ${submission.vin ? '✓ Ingested' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.businessName ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Business Name: ${submission.businessName ? '✓' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.ein ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">EIN: ${submission.ein ? '✓' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.driversLicense ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Driver's License: ${submission.driversLicense ? '✓' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.vin ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">VIN Photo: ${submission.vin ? '✓' : '✗ Awaiting'}</span>
                             </div>
                         </div>
                     `;
@@ -1698,8 +1854,8 @@
             }
         }
 
-        // Handle sending the drafted email (simulated, showing premium notification)
-        function sendDraftResponse(id) {
+        // Handle sending the drafted email via SMTP
+        async function sendDraftResponse(id) {
             const textEl = document.getElementById(`reply-text-${id}`);
             const draftText = textEl ? textEl.value : "";
             
@@ -1708,17 +1864,33 @@
                 return;
             }
             
-            // Visual feedback
-            alert(`SECURE TRANSMISSION SUCCESSFUL\n\nYour drafted response has been compiled and securely dispatched locally to the client's registered address.`);
-            
-            // Hide composer and clear state
             const composerEl = document.getElementById(`composer-${id}`);
-            if (composerEl) composerEl.style.display = 'none';
-            if (textEl) textEl.value = '';
             
-            // Auto acknowledge since responded
-            if (!acknowledgedIds.has(id)) {
-                toggleAcknowledge(id);
+            try {
+                const response = await fetch('/api/submissions/send-reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id, replyText: draftText })
+                });
+                
+                if (response.ok) {
+                    showNotification("✉️ Secure Transmission Successful. Draft dispatched to client.");
+                    
+                    // Hide composer and clear state
+                    if (composerEl) composerEl.style.display = 'none';
+                    if (textEl) textEl.value = '';
+                    
+                    // Auto acknowledge since responded
+                    if (!acknowledgedIds.has(id)) {
+                        toggleAcknowledge(id);
+                    }
+                } else {
+                    const data = await response.json();
+                    alert(`❌ Failed to send drafted response: ${data.error || "Unknown server error."}`);
+                }
+            } catch(e) {
+                console.error("Failed to send draft response email:", e);
+                alert("❌ Network error attempting to securely dispatch email. Check server log.");
             }
         }
 
@@ -1760,6 +1932,116 @@
             }, 4000);
         }
 
+        // --- NEW PREDICTIVE SEARCH AUTOCOMPLETE & DOCUMENT PREVIEW LOGIC ---
+
+        function handleSearchInput(event) {
+            const value = event.target.value.toLowerCase().trim();
+            const dropdown = document.getElementById('search-suggestions');
+            if (!dropdown) return;
+            
+            if (!value) {
+                closeSuggestions();
+                renderSubmissions();
+                return;
+            }
+            
+            const suggestions = [];
+            const seen = new Set();
+            
+            submissionsList.forEach(s => {
+                // Match client name
+                if (s.name && s.name.toLowerCase().includes(value) && !seen.has(`name:${s.name}`)) {
+                    suggestions.push({ text: s.name, type: 'Name' });
+                    seen.add(`name:${s.name}`);
+                }
+                // Match email
+                if (s.email && s.email.toLowerCase().includes(value) && !seen.has(`email:${s.email}`)) {
+                    suggestions.push({ text: s.email, type: 'Email' });
+                    seen.add(`email:${s.email}`);
+                }
+                // Match Business Name (Onboarding clients)
+                if (s.businessName && s.businessName.toLowerCase().includes(value) && !seen.has(`biz:${s.businessName}`)) {
+                    suggestions.push({ text: s.businessName, type: 'Business' });
+                    seen.add(`biz:${s.businessName}`);
+                }
+            });
+            
+            if (suggestions.length === 0) {
+                closeSuggestions();
+                renderSubmissions();
+                return;
+            }
+            
+            dropdown.innerHTML = suggestions.map(s => {
+                const escapedText = escapeHtml(s.text);
+                return `
+                    <div class="suggestion-item" onclick="selectSuggestion('${escapedText.replace(/'/g, "\\'")}')">
+                        <span>${escapedText}</span>
+                        <span class="suggestion-type">${s.type}</span>
+                    </div>
+                `;
+            }).join('');
+            dropdown.classList.add('open');
+            
+            // Re-run search in real time as well
+            renderSubmissions();
+        }
+        
+        function selectSuggestion(text) {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = text;
+            }
+            closeSuggestions();
+            renderSubmissions();
+        }
+        
+        function closeSuggestions() {
+            const dropdown = document.getElementById('search-suggestions');
+            if (dropdown) {
+                dropdown.innerHTML = '';
+                dropdown.classList.remove('open');
+            }
+        }
+        
+        function refreshSearch() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            closeSuggestions();
+            setFilterType('all');
+            fetchSubmissions();
+            showNotification('🔄 Search cleared & database refreshed.');
+        }
+        
+        function showDocumentPreview(imagePath) {
+            const modal = document.getElementById('preview-modal');
+            const img = document.getElementById('preview-modal-img');
+            const dl = document.getElementById('preview-modal-download');
+            
+            if (modal && img && dl) {
+                img.src = imagePath;
+                dl.href = imagePath;
+                modal.classList.add('open');
+            }
+        }
+        
+        // Close modal when clicking on backdrop
+        function closePreviewModal(event) {
+            if (event.target.id === 'preview-modal') {
+                document.getElementById('preview-modal').classList.remove('open');
+            }
+        }
+        
+        // Close search suggestions on click outside
+        document.addEventListener('click', (e) => {
+            const container = document.querySelector('.search-container');
+            if (container && !container.contains(e.target)) {
+                closeSuggestions();
+            }
+        });
+
         // -------------------------------------------------------------
         // COMPLEMENTARY UTILITY FUNCTIONS
         // -------------------------------------------------------------
@@ -1789,5 +2071,17 @@
                 .replace(/'/g, "&#039;");
         }
     </script>
+    <!-- Premium Document Preview Modal -->
+    <div id="preview-modal" class="preview-modal" onclick="closePreviewModal(event)">
+        <div class="preview-modal-content">
+            <span class="preview-modal-close" onclick="document.getElementById('preview-modal').classList.remove('open')">&times;</span>
+            <img id="preview-modal-img" src="" alt="Document Preview">
+            <div class="preview-modal-actions">
+                <a id="preview-modal-download" href="" download class="btn-download-modal">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download Document
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
