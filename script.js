@@ -691,7 +691,6 @@ function logoutClientPortal() {
     
     // Reset inputs
     resetConversation();
-    showPortalNotification('🔒 Session closed. Returned to secure guest terminal.');
 }
 
 // ─── TELEMETRY & MULTIPART UPLOADS ──────────────────────────────────────────
