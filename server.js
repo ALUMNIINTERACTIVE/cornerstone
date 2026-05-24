@@ -113,10 +113,7 @@ function loadDatabase() {
     try {
         if (fs.existsSync(DB_FILE)) {
             const data = fs.readFileSync(DB_FILE, 'utf8');
-            let db = JSON.parse(data || '[]');
-            // Filter out dev@alumniinteractive.com dynamically as requested
-            db = db.filter(item => !item.email || item.email.toLowerCase() !== 'dev@alumniinteractive.com');
-            return db;
+            return JSON.parse(data || '[]');
         }
     } catch (e) {
         console.error("❌ Failed to load submissions database:", e);
