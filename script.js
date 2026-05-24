@@ -994,16 +994,7 @@ function handleKnowledgeQuery(text) {
         return `The answer is **${mathResult}**.\n\nIs there anything else I can help you with — insurance questions or policy guidance?`;
     }
 
-    // Warm greetings
-    if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy)[\s!?.,]*$/.test(lower)) {
-        const name = loggedInClient ? `, ${loggedInClient.name}` : '';
-        return `Hello${name}! I'm Cornerstone's Insurance Concierge Specialist. I can answer any questions you have about coverage, deductibles, premiums, or file ingestion.\n\nWhat can I do for you today?`;
-    }
-
-    const isQuestion = text.includes('?') || /^(what|how|why|when|where|who|can|does|do|is|are|will|should|could|would|tell me|explain|define|difference between|what's|whats|how much|how many)/.test(lower);
-    if (!isQuestion) return null;
-
-    return routeInsuranceQuestion(lower);
+    return null;
 }
 
 function routeInsuranceQuestion(lower) {
