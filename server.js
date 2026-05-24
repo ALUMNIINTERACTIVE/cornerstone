@@ -839,10 +839,21 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
 
     // Static fallback if local LLM is completely offline
     console.log(`[CHAT_AI] Offline fallback triggered.`);
-    let replyMessage = "Welcome to Cornerstone Insurance Firm. You can describe your request and attach documents right here in the chat terminal. The Secure Ingestion Vault on the right will compile your details; simply review and click 'Verify & Submit' to finalize your request.";
+    
+    // Extract last user message for the mock conversational engine
+    let userText = "";
+    if (messages && messages.length > 0) {
+        const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+        if (lastUserMsg) {
+            userText = lastUserMsg.content;
+        }
+    }
+
+    const vState = req.body.vaultState;
+    let replyMessage = generateSmartMockResponse(userText, vState);
     
     if (req.file) {
-        replyMessage = `I have successfully received and securely staged your uploaded document: "${req.file.originalname}". I have locked this document into your Secure Ingestion Vault on the right. Please provide your Full Name and Email Address if you haven't done so, then click 'Verify & Submit Dossier' to transmit this request to our underwriters.`;
+        replyMessage = `[Telemetry Document Ingested: ${req.file.originalname}]\n\n` + replyMessage;
     }
     
     res.json({ 
@@ -859,3 +870,92 @@ app.listen(PORT, () => {
     console.log(`📊 Access the secure Agent Inbox: http://localhost:${PORT}/admin.html`);
     console.log(`================================================================\n`);
 });
+
+// ─────────────────────────────────────────────────────────────
+// SMART CONVERSATIONAL OFFLINE MOCK AI ENGINE
+// ─────────────────────────────────────────────────────────────
+function generateSmartMockResponse(text, vaultState) {
+    const lower = (text || '').toLowerCase().trim();
+    
+    // Determine the name to use
+    let clientName = "";
+    if (vaultState && vaultState.fullName) {
+        clientName = `, ${vaultState.fullName}`;
+    }
+
+    // Build the status of missing items
+    let missingDocs = [];
+    if (vaultState) {
+        if (!vaultState.businessName) missingDocs.push("Legal Business Name");
+        if (!vaultState.ein) missingDocs.push("9-digit Employer Identification Number (EIN)");
+        if (!vaultState.driversLicense) missingDocs.push("Owner's Driver's License photo");
+        if (!vaultState.vin) missingDocs.push("Vehicle VIN # photo");
+    } else {
+        missingDocs = ["Legal Business Name", "EIN", "Owner's Driver's License photo", "Vehicle VIN # photo"];
+    }
+
+    let checklistReminder = "";
+    if (missingDocs.length > 0) {
+        checklistReminder = `\n\nTo finalize your commercial trucking insurance quote, I politely remind you that we still need to stage the following details:\n` + 
+            missingDocs.map((doc, idx) => `${idx + 1}. ${doc}`).join('\n') + 
+            `\n\nYou can enter your Business Name or EIN directly here, or click the '+' icon in the chat row to upload your Driver's License or VIN photos!`;
+    } else {
+        checklistReminder = `\n\n🎉 Outstanding! I have securely received and staged all your files and business details. Your onboarding dossier is 100% complete and verified. An underwriter is currently reviewing your file and will contact you shortly!`;
+    }
+
+    // 1. Staging status inquiries
+    if (lower.includes('need next') || lower.includes('what do i need') || lower.includes('what is needed') || lower.includes('status') || lower.includes('missing') || lower.includes('checklist') || lower.includes('outstanding')) {
+        if (missingDocs.length > 0) {
+            return `Hello${clientName}! To finalize your commercial trucking insurance quote, please provide the remaining details:
+
+` + missingDocs.map((doc, idx) => `${idx + 1}. ${doc}`).join('\n') + `
+
+Feel free to ask me general questions about insurance, deductibles, or coverages at any time!`;
+        } else {
+            return `Hello${clientName}! All documents and details have been successfully received and validated! An agent will be in touch with you shortly after uploading the remaining documents.`;
+        }
+    }
+
+    // 2. Greetings
+    if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy)[\s!?.,]*$/.test(lower) || lower === 'hi' || lower === 'hello') {
+        return `Hello${clientName}! I am your dedicated Cornerstone Insurance Concierge. I am delighted to assist you today. I can answer any questions you have about commercial trucking policies, deductibles, and premiums, or help you finalize your quote request.` + checklistReminder;
+    }
+
+    // 3. How are you
+    if (lower.includes('how are you') || lower.includes('how\'s it going') || lower.includes('hows it going') || lower.includes('how do you do')) {
+        return `I am doing exceptionally well, thank you for asking! I'm here in the virtual office at Cornerstone, energized and ready to help you navigate our elite coverage options.` + checklistReminder;
+    }
+
+    // 4. Tallest building in the world
+    if (lower.includes('tallest building') || lower.includes('burj khalifa')) {
+        return `The tallest building in the world is the Burj Khalifa in Dubai, United Arab Emirates, standing at a magnificent height of 828 meters (2,717 feet) with 163 floors. It is an extraordinary marvel of modern architectural design, built to withstand immense structural forces—very much like how our commercial insurance coverage limits are structured to defend your trucking fleet against unexpected risks!` + checklistReminder;
+    }
+
+    // 5. Who/What are you
+    if (lower.includes('who are you') || lower.includes('your name') || lower.includes('what do you do') || lower.includes('what are you')) {
+        return `I am the Cornerstone Insurance Concierge, an elite digital assistant built to guide you through securing premier commercial trucking coverages. I can answer any questions you have about insurance terms, or help you stage and submit your quote credentials.` + checklistReminder;
+    }
+
+    // 6. Insurance terms
+    if (lower.includes('deductible')) {
+        return `A **deductible** is the specific amount you agree to pay out-of-pocket before your insurance policy begins to cover a claim. Choosing a higher deductible directly lowers your premium, whereas a lower deductible reduces your out-of-pocket burden in a loss. Let me know if you would like me to clarify custom deductible options!` + checklistReminder;
+    }
+    if (lower.includes('premium')) {
+        return `An insurance **premium** is the recurring payment required to keep your commercial policy active. Premiums are carefully calculated based on your driver safety records, vehicle ages, operating radius, and chosen deductible thresholds.` + checklistReminder;
+    }
+    if (lower.includes('liability')) {
+        return `**Liability coverage** protects your commercial trucking business if you or one of your drivers are found legally responsible for third-party bodily injuries or property damage. For commercial fleets, our standard liability threshold is typically set at $1,000,000 to ensure complete protection.` + checklistReminder;
+    }
+    if (lower.includes('comprehensive') || lower.includes('collision')) {
+        return `🚗 **Collision Coverage** pays for accident damage to your truck resulting from contact with another vehicle or object.
+🌪️ **Comprehensive Coverage** covers physical damage from non-collision occurrences, such as severe weather, vandalism, theft, or hitting animals. Both are essential for protecting your fleet assets.` + checklistReminder;
+    }
+    if (lower.includes('cargo') || lower.includes('trucking')) {
+        return `Cornerstone specializes in high-grade **Commercial Trucking Insurance**. We provide robust general liability, motor truck cargo, physical damage, and bobtail coverage tailored precisely to your operations.` + checklistReminder;
+    }
+
+    // 7. General QA fallback
+    return `Thank you for sharing that! As your dedicated Cornerstone AI Insurance concierge, I am happy to have a conversation about any topic or resolve custom questions you have. 
+
+If there is a specific question about coverages, deductibles, or fleet safety you'd like to explore, just let me know!` + checklistReminder;
+}
