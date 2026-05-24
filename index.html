@@ -28,6 +28,13 @@
     <!-- Drifting Luxury Particle Canvas -->
     <canvas id="particle-canvas"></canvas>
 
+    <!-- Floating Portal Access Actions -->
+    <div class="top-nav-actions" id="top-nav-actions-container">
+        <button type="button" class="btn-toggle-vault" id="btn-portal-login-trigger" onclick="openLoginOverlay()">
+            <i class="fa-solid fa-user-lock"></i> <span class="btn-text">Client Portal Login</span>
+        </button>
+    </div>
+
     <!-- Compact Elegant Brand Header -->
     <header class="minimal-header">
         <div class="header-container">
@@ -43,6 +50,17 @@
             
             <!-- Immersive Central Content Wrapper -->
             <div class="minimal-chat-core">
+                <!-- Personal Client Profile Banner Header -->
+                <div id="client-profile-header" class="client-profile-header" style="display: none;">
+                    <div class="client-identity-box">
+                        <div class="client-welcome-name" id="client-welcome-name">Welcome, [Name]</div>
+                        <div class="client-business-subtitle" id="client-business-subtitle"></div>
+                    </div>
+                    <button type="button" class="btn-client-logout" onclick="logoutClientPortal()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+
                 <!-- Welcome Title (fades/hides when chat starts) -->
                 <h2 class="chat-welcome-title">Request for quote.</h2>
 
@@ -230,6 +248,54 @@
             animate();
         }
     </script>
-</body>
+    <!-- Secure Authentication & Verification Overlay Portal -->
+    <div id="auth-overlay-container" class="auth-overlay-container">
+        <!-- Card 1: Email 6-Digit Code Verification Screen -->
+        <div id="auth-card-verify" class="auth-card">
+            <h3>Security Verification</h3>
+            <p>We have dispatched a real 6-digit verification code to your email address: <strong id="verify-email-display">your@email.com</strong>.</p>
+            <p style="font-size: 0.8rem; color: #a78bfa;">Please check your inbox (or spam) and enter it below to authorize this secure quote request.</p>
+            <div class="auth-form-group">
+                <label for="verification-code-input">6-Digit Code</label>
+                <input type="text" id="verification-code-input" placeholder="000000" maxlength="6" style="text-align: center; letter-spacing: 0.3em; font-weight: bold;">
+            </div>
+            <div id="verify-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Incorrect verification code. Please try again.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitEmailVerificationCode()">Verify Email Code</button>
+            <div class="auth-switch">
+                Didn't receive it? <a href="#" onclick="resendVerificationCode(); return false;">Resend Code</a>
+            </div>
+        </div>
 
+        <!-- Card 2: Password Setup Screen -->
+        <div id="auth-card-password" class="auth-card">
+            <h3>Secure Password Setup</h3>
+            <p>Set a secure password associated with your email to access your inverted client portal, upload documents, and check quote telemetry in the future.</p>
+            <div class="auth-form-group">
+                <label for="setup-password-input">Password (Min 6 chars)</label>
+                <input type="password" id="setup-password-input" placeholder="••••••••">
+            </div>
+            <div id="password-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Password must be at least 6 characters long.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitPasswordSetup()">Activate Client Account</button>
+        </div>
+
+        <!-- Card 3: Login Screen -->
+        <div id="auth-card-login" class="auth-card">
+            <h3>Client Portal Login</h3>
+            <p>Enter your email and password to access your secure insurance portal and view your quote status.</p>
+            <div class="auth-form-group">
+                <label for="login-email-input">Email Address</label>
+                <input type="email" id="login-email-input" placeholder="email@example.com">
+            </div>
+            <div class="auth-form-group" style="margin-top: 0.5rem;">
+                <label for="login-password-input">Password</label>
+                <input type="password" id="login-password-input" placeholder="••••••••">
+            </div>
+            <div id="login-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Invalid email or password. Please try again.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitClientLogin()">Authorize &amp; Access Portal</button>
+            <div class="auth-switch">
+                Need a quote? <a href="#" onclick="closeAuthOverlay(); return false;">Start Intake</a>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

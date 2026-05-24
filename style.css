@@ -1963,3 +1963,307 @@ footer {
     z-index: 0;
     pointer-events: none; /* Let clicks pass through to content! */
 }
+
+/* ==========================================================================
+   PORTAL COLOR THEME INVERSION (White is Purple, Purple is White)
+   ========================================================================== */
+body.inverted-client-portal {
+    --bg-primary: #3b0764; /* Obsidian Deep Imperial Purple */
+    --bg-secondary: #581c87; /* Luxury Royal Purple */
+    --text-main: #ffffff; /* Elegant White Text */
+    --text-secondary: #cbd5e1; /* Soft Lavender Slate */
+    --border-color: rgba(255, 255, 255, 0.18); /* Translucent Glass Borders */
+}
+
+body.inverted-client-portal .minimal-header {
+    background: linear-gradient(135deg, #3b0764 0%, #581c87 100%) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+body.inverted-client-portal .minimal-header h1 {
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .minimal-header .logo i {
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+body.inverted-client-portal .chat-welcome-title {
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .chat-input-row {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+body.inverted-client-portal .chat-input-row input {
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .chat-input-row input::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+body.inverted-client-portal .btn-attach {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .btn-attach:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+}
+
+body.inverted-client-portal .btn-mic {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.inverted-client-portal .btn-mic:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.inverted-client-portal .btn-send {
+    background: #ffffff !important;
+    color: #581c87 !important;
+}
+
+body.inverted-client-portal .btn-send:hover {
+    background: #f1f5f9 !important;
+    transform: scale(1.05);
+}
+
+body.inverted-client-portal .chat-message.assistant p {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+body.inverted-client-portal .chat-message.user p {
+    background: #ffffff !important;
+    color: #3b0764 !important;
+    border: 1px solid #ffffff !important;
+}
+
+body.inverted-client-portal footer {
+    background: #3b0764 !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.inverted-client-portal footer p a {
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   SECURE CLIENT ONBOARDING / LOGIN OVERLAY
+   ========================================================================== */
+.auth-overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 5, 20, 0.88);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-overlay-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.auth-card {
+    background: rgba(30, 27, 75, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--border-radius);
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 50px rgba(124, 58, 237, 0.3);
+    color: #ffffff;
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: authSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    backdrop-filter: blur(15px);
+}
+
+.auth-card.active {
+    display: flex;
+}
+
+@keyframes authSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-card h3 {
+    font-size: 1.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    text-align: center;
+    font-family: var(--font-luxury);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-card p {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.auth-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auth-form-group label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a78bfa;
+    font-weight: 600;
+}
+
+.auth-form-group input {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.9rem 1.2rem;
+    color: #ffffff;
+    border-radius: var(--border-radius);
+    font-family: var(--font-luxury);
+    font-size: 1.1rem;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.auth-form-group input:focus {
+    border-color: #a78bfa;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.25);
+}
+
+.btn-auth-submit {
+    background: #7c3aed;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    font-family: var(--font-luxury);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.btn-auth-submit:hover {
+    background: #8b5cf6;
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.55);
+    transform: translateY(-1px);
+}
+
+.auth-switch {
+    font-size: 0.85rem;
+    text-align: center;
+    color: #94a3b8;
+    margin-top: 5px;
+}
+
+.auth-switch a {
+    color: #c084fc;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+}
+
+.auth-switch a:hover {
+    color: #d8b4fe;
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   PERSONAL PROFILE HEADER & PORTAL CONTROLS
+   ========================================================================== */
+.client-profile-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1rem 1.8rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: authSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.client-identity-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.client-welcome-name {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    font-family: var(--font-luxury);
+}
+
+.client-business-subtitle {
+    font-size: 0.85rem;
+    color: #d8b4fe;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.btn-client-logout {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border-radius: var(--border-radius);
+    font-family: var(--font-luxury);
+}
+
+.btn-client-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}

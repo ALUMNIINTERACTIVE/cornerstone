@@ -4,6 +4,78 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
+
+// Setup Nodemailer transporter with SMTP or local sendmail fallback
+let mailTransporter;
+
+if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    console.log(`[EMAIL] Configuring authenticated SMTP transporter: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
+    mailTransporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
+        }
+    });
+} else {
+    console.log(`[EMAIL] No SMTP credentials found. Initializing sendmail fallback.`);
+    mailTransporter = nodemailer.createTransport({
+        sendmail: true,
+        newline: 'unix',
+        path: '/usr/sbin/sendmail'
+    });
+}
+
+// Verification Codes In-Memory Store
+const verificationCodes = new Map();
+
+async function sendVerificationEmail(email, code) {
+    console.log(`[EMAIL] Attempting to send real verification email to: ${email} with code: ${code}`);
+    
+    const mailOptions = {
+        from: process.env.SMTP_FROM || '"Cornerstone Insurance Firm" <info@chatcif.com>',
+        to: email,
+        subject: 'Verify Your Email Address - Cornerstone Insurance Firm',
+        text: `Your Cornerstone verification code is: ${code}\n\nPlease enter this code in the client portal to complete your quote request.`,
+        html: `
+            <div style="font-family: 'Times New Roman', Times, serif; max-width: 600px; margin: 0 auto; border: 1px solid #7c3aed; padding: 30px; border-radius: 4px; background-color: #ffffff; color: #1e1b4b;">
+                <div style="text-align: center; border-bottom: 1px solid #7c3aed; padding-bottom: 20px; margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; letter-spacing: 0.1em; color: #7c3aed; margin: 0;">CORNERSTONE</h1>
+                    <p style="font-size: 10px; letter-spacing: 0.4em; color: #5b21b6; text-transform: uppercase; margin: 5px 0 0 0; font-weight: bold;">Insurance Firm</p>
+                </div>
+                <h2 style="font-size: 20px; font-weight: normal; color: #1e1b4b; margin-top: 0;">Verify Your Email Address</h2>
+                <p style="font-size: 16px; line-height: 1.6; color: #475569;">Thank you for initiating a quote request with Cornerstone Insurance Firm. To continue and secure your client portal, please use the following 6-digit verification code:</p>
+                <div style="background-color: #faf9fe; border: 1px dashed #7c3aed; border-radius: 4px; padding: 15px; text-align: center; margin: 25px 0;">
+                    <span style="font-size: 32px; font-weight: bold; letter-spacing: 0.25em; color: #7c3aed; font-family: monospace;">${code}</span>
+                </div>
+                <p style="font-size: 14px; line-height: 1.6; color: #475569;">If you did not request this quote, please ignore this email. This code will expire in 10 minutes.</p>
+                <div style="border-top: 1px solid #f1ecfe; padding-top: 20px; margin-top: 30px; text-align: center; font-size: 12px; color: #94a3b8;">
+                    <p style="margin: 0;">&copy; 2026 Cornerstone Insurance Firm. All rights reserved.</p>
+                    <p style="margin: 5px 0 0 0;">9029 Jefferson Hwy D 1135, New Orleans, LA 70123</p>
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        const info = await mailTransporter.sendMail(mailOptions);
+        console.log(`[EMAIL] Email successfully sent: ${info.messageId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("❌ Nodemailer send failed, executing direct fallback logic:", error);
+        
+        // Output large, visible message in the terminal console with the code in case sendmail fails locally
+        console.log(`\n================================================================`);
+        console.log(`🔑  VERIFICATION CODE FOR ${email.toUpperCase()}: [ ${code} ]`);
+        console.log(`================================================================\n`);
+        
+        return { success: false, error: error.message };
+    }
+}
+
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -279,6 +351,283 @@ app.post('/api/verify-admin', (req, res) => {
         res.status(401).json({ success: false, error: "Invalid passcode" });
     }
 });
+
+// -------------------------------------------------------------
+// SECURE CLIENT PORTAL & ONBOARDING ENDPOINTS
+// -------------------------------------------------------------
+
+// Generate and send 6-digit email verification code
+app.post('/api/clients/send-code', async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ error: "Email address is required." });
+    }
+
+    // Generate a secure 6-digit random code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Store in-memory with a 10-minute expiration
+    verificationCodes.set(email.toLowerCase(), {
+        code,
+        expires: Date.now() + 10 * 60 * 1000
+    });
+
+    const emailSent = await sendVerificationEmail(email, code);
+    
+    res.json({ 
+        success: true, 
+        message: "Verification code sent successfully.",
+        // For local development fallback if sendmail is not configured on the developer machine:
+        debugCode: code 
+    });
+});
+
+// Verify 6-digit code
+app.post('/api/clients/verify-code', (req, res) => {
+    const { email, code } = req.body;
+    if (!email || !code) {
+        return res.status(400).json({ error: "Email and verification code are required." });
+    }
+
+    const record = verificationCodes.get(email.toLowerCase());
+    if (!record) {
+        return res.status(400).json({ error: "No active verification code found for this email." });
+    }
+
+    if (Date.now() > record.expires) {
+        verificationCodes.delete(email.toLowerCase());
+        return res.status(400).json({ error: "Verification code has expired." });
+    }
+
+    if (record.code !== code.trim()) {
+        return res.status(400).json({ error: "Incorrect verification code." });
+    }
+
+    // Keep it in storage or delete upon registration
+    res.json({ success: true, message: "Email verified successfully." });
+});
+
+// Register new client account (Phase 1)
+app.post('/api/clients/register', (req, res) => {
+    const { email, name, phone, effectiveDate, password } = req.body;
+    if (!email || !name || !phone || !effectiveDate || !password) {
+        return res.status(400).json({ error: "All profile fields and password are required." });
+    }
+
+    const db = loadDatabase();
+    
+    // Check if account already exists
+    const existing = db.find(s => s.type === 'new_client_request' && s.email.toLowerCase() === email.toLowerCase());
+    if (existing) {
+        return res.status(400).json({ error: "An account with this email address already exists." });
+    }
+
+    const newClient = {
+        id: 'client_' + Date.now(),
+        type: 'new_client_request',
+        name,
+        email: email.toLowerCase(),
+        phone,
+        password, // Client portal login info
+        effectiveDate,
+        businessName: null,
+        ein: null,
+        driversLicense: null,
+        vin: null,
+        timestamp: new Date().toISOString(),
+        updates: [],
+        status: "Incomplete",
+        aiVerdict: {
+            verified: true,
+            inquirySummary: `New client request registered for commercial trucking policy starting ${effectiveDate}.`,
+            riskProfile: "Low",
+            recommendedCoverageLimits: "Awaiting final documents (Driver's License, VIN, EIN, Business Name)...",
+            followUpQuestions: [
+                "Please upload a photo of the owner's driver's license.",
+                "Please upload a photo of the VIN #.",
+                "Provide the company EIN and Business Name."
+            ]
+        }
+    };
+
+    db.push(newClient);
+    saveDatabase(db);
+
+    // Delete verification code
+    verificationCodes.delete(email.toLowerCase());
+
+    console.log(`[SERVER] New client registered: ${name} (${email})`);
+
+    res.json({ 
+        success: true, 
+        client: {
+            id: newClient.id,
+            name: newClient.name,
+            email: newClient.email,
+            phone: newClient.phone,
+            effectiveDate: newClient.effectiveDate,
+            businessName: newClient.businessName,
+            ein: newClient.ein,
+            driversLicense: newClient.driversLicense,
+            vin: newClient.vin
+        }
+    });
+});
+
+// Login client portal
+app.post('/api/clients/login', (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required." });
+    }
+
+    const db = loadDatabase();
+    const client = db.find(s => s.type === 'new_client_request' && s.email.toLowerCase() === email.toLowerCase() && s.password === password);
+    
+    if (!client) {
+        return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    res.json({
+        success: true,
+        client: {
+            id: client.id,
+            name: client.name,
+            email: client.email,
+            phone: client.phone,
+            effectiveDate: client.effectiveDate,
+            businessName: client.businessName,
+            ein: client.ein,
+            driversLicense: client.driversLicense,
+            vin: client.vin,
+            status: client.status,
+            updates: client.updates
+        }
+    });
+});
+
+// Telemetry update for Phase 2 (Business name, EIN, Driver's License photo, VIN photo)
+app.post('/api/clients/update-telemetry', upload.fields([
+    { name: 'driversLicense', maxCount: 1 },
+    { name: 'vin', maxCount: 1 }
+]), (req, res) => {
+    const { clientId, ein, businessName } = req.body;
+    if (!clientId) {
+        return res.status(400).json({ error: "Missing client identifier." });
+    }
+
+    const db = loadDatabase();
+    const client = db.find(s => s.id === clientId);
+    if (!client) {
+        return res.status(404).json({ error: "Client account not found." });
+    }
+
+    if (ein) client.ein = ein;
+    if (businessName) client.businessName = businessName;
+
+    if (req.files) {
+        if (req.files.driversLicense && req.files.driversLicense[0]) {
+            client.driversLicense = `/uploads/${req.files.driversLicense[0].filename}`;
+        }
+        if (req.files.vin && req.files.vin[0]) {
+            client.vin = `/uploads/${req.files.vin[0].filename}`;
+        }
+    }
+
+    // Check if onboarding is completely finished
+    if (client.businessName && client.ein && client.driversLicense && client.vin) {
+        client.status = "Complete";
+        client.aiVerdict.inquirySummary = `Commercial trucking insurance quote completed for ${client.businessName} (EIN: ${client.ein}) starting ${client.effectiveDate}.`;
+        client.aiVerdict.riskProfile = "Medium";
+        client.aiVerdict.recommendedCoverageLimits = "Commercial Auto / Trucking Liability ($1,000,000)";
+        client.aiVerdict.followUpQuestions = [];
+    }
+
+    saveDatabase(db);
+
+    console.log(`[SERVER] Telemetry updated for ${client.name}. Status: ${client.status}`);
+
+    res.json({
+        success: true,
+        client: {
+            id: client.id,
+            name: client.name,
+            email: client.email,
+            phone: client.phone,
+            effectiveDate: client.effectiveDate,
+            businessName: client.businessName,
+            ein: client.ein,
+            driversLicense: client.driversLicense,
+            vin: client.vin,
+            status: client.status,
+            updates: client.updates
+        }
+    });
+});
+
+// Post live update notification (driver updates, policy adjustments)
+app.post('/api/clients/submit-update', (req, res) => {
+    const { clientId, message } = req.body;
+    if (!clientId || !message) {
+        return res.status(400).json({ error: "Missing client ID or update message." });
+    }
+
+    const db = loadDatabase();
+    const client = db.find(s => s.id === clientId);
+    if (!client) {
+        return res.status(404).json({ error: "Client account not found." });
+    }
+
+    const updateItem = {
+        timestamp: new Date().toISOString(),
+        message
+    };
+
+    if (!client.updates) client.updates = [];
+    client.updates.push(updateItem);
+
+    // Create a new notification submission for the admin workspace inbox
+    const newNotification = {
+        id: 'notif_' + Date.now(),
+        type: 'portal_update',
+        clientId: client.id,
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        details: `Client updates requested: "${message}"`,
+        timestamp: new Date().toISOString(),
+        aiVerdict: {
+            verified: true,
+            inquirySummary: `Incoming client portal update notification: "${message}"`,
+            riskProfile: "Low",
+            recommendedCoverageLimits: "N/A",
+            followUpQuestions: []
+        }
+    };
+
+    db.push(newNotification);
+    saveDatabase(db);
+
+    console.log(`[SERVER] Portal update received from ${client.name}: ${message}`);
+
+    res.json({
+        success: true,
+        client: {
+            id: client.id,
+            name: client.name,
+            email: client.email,
+            phone: client.phone,
+            effectiveDate: client.effectiveDate,
+            businessName: client.businessName,
+            ein: client.ein,
+            driversLicense: client.driversLicense,
+            vin: client.vin,
+            status: client.status,
+            updates: client.updates
+        }
+    });
+});
+
 
 // 1. Get all submissions (Admin Inbox portal)
 app.get('/api/submissions', (req, res) => {

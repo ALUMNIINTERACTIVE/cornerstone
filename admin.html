@@ -1350,14 +1350,24 @@
                 `;
                 return;
             }
-            
             listEl.innerHTML = filtered.map(submission => {
                 const dateStr = formatDate(submission.timestamp);
                 const isAck = acknowledgedIds.has(submission.id);
                 
-                // Formulate badges
-                const typeBadgeClass = submission.type === 'policy_change' ? 'type-badge policy' : 'type-badge';
-                const typeText = submission.type === 'policy_change' ? 'Policy Alteration' : 'Consultation Request';
+                // Formulate badges and type texts
+                let typeBadgeClass = 'type-badge';
+                let typeText = 'Consultation Request';
+                
+                if (submission.type === 'policy_change') {
+                    typeBadgeClass = 'type-badge policy';
+                    typeText = 'Policy Alteration';
+                } else if (submission.type === 'new_client_request') {
+                    typeBadgeClass = 'type-badge';
+                    typeText = 'New Client Request';
+                } else if (submission.type === 'portal_update') {
+                    typeBadgeClass = 'type-badge policy';
+                    typeText = 'Portal Notification';
+                }
                 
                 // AI Verdict extraction
                 const verdict = submission.aiVerdict || {
@@ -1372,19 +1382,70 @@
                 const riskProfile = verdict.riskProfile || 'Low';
                 const riskClass = riskProfile.toLowerCase();
                 
-                // Document node
+                // Document node mapping
                 let documentHtml = '';
-                if (submission.document) {
-                    const filename = submission.document.split('/').pop();
-                    documentHtml = `
-                        <div class="document-block">
-                            <div class="doc-info">
-                                <i class="fa-solid fa-file-image"></i>
-                                <span class="doc-name">${filename}</span>
+                if (submission.type === 'new_client_request') {
+                    if (submission.driversLicense) {
+                        const dlFilename = submission.driversLicense.split('/').pop();
+                        documentHtml += `
+                            <div class="document-block" style="margin-top: 10px;">
+                                <div class="doc-info">
+                                    <i class="fa-solid fa-address-card" style="color: var(--accent-purple-light); font-size: 1.4rem;"></i>
+                                    <span class="doc-name">Owner's Driver's License: ${dlFilename}</span>
+                                </div>
+                                <a href="${submission.driversLicense}" target="_blank" class="btn-download" download>
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest Photo
+                                </a>
                             </div>
-                            <a href="${submission.document}" target="_blank" class="btn-download" download>
-                                <i class="fa-solid fa-cloud-arrow-down"></i> Ingest
-                            </a>
+                        `;
+                    }
+                    if (submission.vin) {
+                        const vinFilename = submission.vin.split('/').pop();
+                        documentHtml += `
+                            <div class="document-block" style="margin-top: 8px;">
+                                <div class="doc-info">
+                                    <i class="fa-solid fa-car-rear" style="color: var(--accent-purple-light); font-size: 1.4rem;"></i>
+                                    <span class="doc-name">Vehicle VIN # Photo: ${vinFilename}</span>
+                                </div>
+                                <a href="${submission.vin}" target="_blank" class="btn-download" download>
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest Photo
+                                </a>
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (submission.document) {
+                        const filename = submission.document.split('/').pop();
+                        documentHtml = `
+                            <div class="document-block">
+                                <div class="doc-info">
+                                    <i class="fa-solid fa-file-image"></i>
+                                    <span class="doc-name">${filename}</span>
+                                </div>
+                                <a href="${submission.document}" target="_blank" class="btn-download" download>
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> Ingest
+                                </a>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Render dynamic Activity updates logs for new client profiles
+                let activityHtml = '';
+                if (submission.type === 'new_client_request' && submission.updates && submission.updates.length > 0) {
+                    activityHtml = `
+                        <div class="detail-item" style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 10px;">
+                            <div class="detail-label">Client Portal Update Telemetry Logs</div>
+                            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 4px; margin-top: 6px; max-height: 200px; overflow-y: auto;">
+                                <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                                    ${submission.updates.map(u => `
+                                        <li style="border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 6px; display: flex; gap: 8px;">
+                                            <span style="color: var(--accent-purple-light); font-weight: bold; flex-shrink: 0;">[${formatDate(u.timestamp).split(' at ')[1]}]</span>
+                                            <span style="color: var(--text-light);">${escapeHtml(u.message)}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
                         </div>
                     `;
                 }
@@ -1393,6 +1454,68 @@
                 const questionsHtml = (verdict.followUpQuestions || [])
                     .map(q => `<li>${q}</li>`)
                     .join('');
+
+                // Custom Detailed Grid for Onboarding Clients vs General Consultations
+                let detailsGridHtml = '';
+                if (submission.type === 'new_client_request') {
+                    detailsGridHtml = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 5px;">
+                            <div class="detail-item">
+                                <div class="detail-label">Client Phone</div>
+                                <div class="detail-value"><i class="fa-solid fa-phone" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${escapeHtml(submission.phone || 'N/A')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Effective Date</div>
+                                <div class="detail-value"><i class="fa-regular fa-calendar-days" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${escapeHtml(submission.effectiveDate || 'Pending')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Legal Business Name</div>
+                                <div class="detail-value" style="font-weight: 600; color: var(--text-purple);">${escapeHtml(submission.businessName || 'Awaiting Onboard')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Employer Identification (EIN)</div>
+                                <div class="detail-value" style="font-family: monospace; letter-spacing: 0.05em; background: rgba(255, 255, 255, 0.04); padding: 0.1rem 0.4rem; width: fit-content; border-radius: 3px; border: 1px solid rgba(255,255,255,0.05);">${escapeHtml(submission.ein || 'Awaiting Onboard')}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item" style="margin-top: 15px;">
+                            <div class="detail-label">Onboarding Document Status Checklist</div>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;">
+                                <span class="risk-badge ${submission.businessName ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Business Name: ${submission.businessName ? '✓ Set' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.ein ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">EIN: ${submission.ein ? '✓ Set' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.driversLicense ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Driver's License: ${submission.driversLicense ? '✓ Ingested' : '✗ Awaiting'}</span>
+                                <span class="risk-badge ${submission.vin ? 'low' : 'high'}" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">VIN Photo: ${submission.vin ? '✓ Ingested' : '✗ Awaiting'}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailsGridHtml = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 5px;">
+                            <div class="detail-item">
+                                <div class="detail-label">Staged Timestamp</div>
+                                <div class="detail-value"><i class="fa-regular fa-clock" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${dateStr}</div>
+                            </div>
+                            ${submission.type === 'policy_change' ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Target Policy</div>
+                                    <div class="detail-value policy-num">${escapeHtml(submission.policyNumber || 'N/A')}</div>
+                                </div>
+                            ` : `
+                                <div class="detail-item">
+                                    <div class="detail-label">Requested Line</div>
+                                    <div class="detail-value" style="text-transform: capitalize; font-weight: 500;">
+                                        <i class="fa-solid fa-shield-halved" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${escapeHtml(submission.service || 'General')}
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="detail-item" style="margin-top: 10px;">
+                            <div class="detail-label">Client Statement Details</div>
+                            <div class="client-narrative">"${escapeHtml(submission.details)}"</div>
+                        </div>
+                    `;
+                }
 
                 return `
                     <div class="submission-card ${isAck ? 'acknowledged' : ''}" id="card-${submission.id}">
@@ -1407,33 +1530,12 @@
                                 <div class="${typeBadgeClass}">${typeText}</div>
                             </div>
                             
-                            <!-- Detailed Rows -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 5px;">
-                                <div class="detail-item">
-                                    <div class="detail-label">Staged Timestamp</div>
-                                    <div class="detail-value"><i class="fa-regular fa-clock" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${dateStr}</div>
-                                </div>
-                                ${submission.type === 'policy_change' ? `
-                                    <div class="detail-item">
-                                        <div class="detail-label">Target Policy</div>
-                                        <div class="detail-value policy-num">${escapeHtml(submission.policyNumber || 'N/A')}</div>
-                                    </div>
-                                ` : `
-                                    <div class="detail-item">
-                                        <div class="detail-label">Requested Line</div>
-                                        <div class="detail-value" style="text-transform: capitalize; font-weight: 500;">
-                                            <i class="fa-solid fa-shield-halved" style="color: var(--accent-purple-light); margin-right: 6px;"></i>${escapeHtml(submission.service || 'General')}
-                                        </div>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <div class="detail-item" style="margin-top: 10px;">
-                                <div class="detail-label">Client Statement Details</div>
-                                <div class="client-narrative">"${escapeHtml(submission.details)}"</div>
-                            </div>
+                            <!-- Detailed Block -->
+                            ${detailsGridHtml}
                             
                             ${documentHtml}
+                            
+                            ${activityHtml}
                             
                             <!-- Bottom controls -->
                             <div class="card-action-bar">
