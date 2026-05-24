@@ -811,9 +811,9 @@ async function submitPortalUpdateMessage(msg) {
 function activateClientPortalTheme(client) {
     chatStep = STEP.PHASE2;
     
-    // We want the client portal layout to match the main by default (light mode)
-    document.body.classList.remove('inverted-client-portal');
-    updateMetaThemeColor('#ffffff');
+    // Activate inverted color scheme (Obsidian dark theme is now active by default on login)
+    document.body.classList.add('inverted-client-portal');
+    updateMetaThemeColor('#3b0764');
     
     // Update the welcome title to reflect client portal context
     const welcomeTitle = document.querySelector('.chat-welcome-title');
@@ -831,11 +831,11 @@ function activateClientPortalTheme(client) {
     const sidebarLogin = document.getElementById('vault-sidebar-login-container');
     if (sidebarLogin) sidebarLogin.style.display = 'none';
     
-    // Show client theme switch container and ensure it is unchecked by default to match main
+    // Show client theme switch container and ensure it is checked by default
     const themeSwitch = document.getElementById('theme-switch-container');
     if (themeSwitch) themeSwitch.style.display = 'flex';
     const themeCheckbox = document.getElementById('theme-toggle-checkbox');
-    if (themeCheckbox) themeCheckbox.checked = false;
+    if (themeCheckbox) themeCheckbox.checked = true;
     
     // Sync vaultState
     vaultState.email = client.email;
