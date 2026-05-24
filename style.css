@@ -16,6 +16,7 @@
     --border-color: #f1ecfe;
     
     /* Layout & Styling */
+    --header-height: 80px; /* Core height of the minimal brand header */
     --font-luxury: 'Times New Roman', Times, Baskerville, Georgia, serif;
     --shadow-premium: 0 10px 30px -10px rgba(124, 58, 237, 0.08);
     --shadow-premium-hover: 0 20px 40px -10px rgba(124, 58, 237, 0.16);
@@ -1642,7 +1643,7 @@ footer p {
     text-align: center;
     position: relative;
     z-index: 101;
-    height: 80px;
+    height: var(--header-height, 80px);
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -2099,17 +2100,24 @@ body.inverted-client-portal .footer-portal-link:hover {
 }
 
 @media (max-width: 768px) {
+    :root {
+        --header-height: calc(96px + env(safe-area-inset-top, 0px));
+    }
+    .minimal-header {
+        padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+        padding-bottom: 8px !important;
+    }
     .minimal-chat-layout .staging-vault-panel {
         width: 100%;
         left: -100%;
         border-right: none;
         border-radius: 0;
-        top: 80px;
+        top: var(--header-height, 80px) !important;
         bottom: 50px;
-        height: calc(100vh - 130px);
+        height: calc(100vh - var(--header-height, 80px) - 50px) !important;
     }
     .top-nav-actions {
-        top: 24px;
+        top: calc(22px + env(safe-area-inset-top, 0px));
         right: 16px;
         gap: 8px;
     }
@@ -2538,11 +2546,11 @@ body.inverted-client-portal .hamburger-action-btn:hover {
     .minimal-chat-layout .staging-vault-panel {
         display: flex !important;
         position: fixed !important;
-        top: 80px !important;
+        top: var(--header-height, 80px) !important;
         bottom: 50px !important;
         left: -320px !important; /* Hidden offscreen by default when body.sidebar-closed */
         width: 320px !important;
-        height: calc(100vh - 130px) !important;
+        height: calc(100vh - var(--header-height, 80px) - 50px) !important;
         background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important; /* Premium guest dark purple gradient */
         color: #ffffff !important;
         border-right: 1px solid rgba(124, 58, 237, 0.15) !important;
@@ -2582,11 +2590,11 @@ body.inverted-client-portal .hamburger-action-btn:hover {
     .minimal-chat-layout .staging-vault-panel {
         display: flex !important;
         position: fixed !important;
-        top: 80px !important; /* Stop at bottom of header */
+        top: var(--header-height, 80px) !important; /* Stop at bottom of header */
         bottom: 50px !important; /* Stop at top of footer */
         left: -100% !important; /* Hidden left offscreen by default */
         width: 100% !important;
-        height: calc(100vh - 130px) !important;
+        height: calc(100vh - var(--header-height, 80px) - 50px) !important;
         background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important;
         color: #ffffff !important;
         border-right: none !important;
