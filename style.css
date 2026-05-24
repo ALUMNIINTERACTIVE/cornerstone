@@ -2546,21 +2546,10 @@ body.inverted-client-portal .hamburger-action-btn:hover {
         border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Shift the chat console container to the right when the sidebar is open */
-    body:not(.sidebar-closed).minimal-chat-layout .chat-console-container {
-        padding-left: 320px !important;
-    }
-
-    /* Smooth transition for the chat container shifting */
+    /* Keep the chat console container centered */
     .minimal-chat-layout .chat-console-container {
-        transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         max-width: 800px !important;
         width: 100% !important;
-    }
-
-    /* Expand the container's max-width when sidebar is open to preserve chat width */
-    body:not(.sidebar-closed).minimal-chat-layout .chat-console-container {
-        max-width: 1120px !important; /* 800px chat width + 320px sidebar width! */
     }
 
     /* Hide standard close button since we have the top-right toggle button */
