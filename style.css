@@ -2530,3 +2530,37 @@ body.inverted-client-portal .hamburger-action-btn:hover {
         display: block !important;
     }
 }
+
+/* Sidebar Client Portal Login Button Styling */
+.btn-vault-login {
+    width: 100%;
+    background: var(--accent-purple) !important;
+    border: 1px solid var(--accent-purple) !important;
+    color: #ffffff !important;
+    font-family: var(--font-luxury);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+}
+
+.btn-vault-login:hover {
+    background: var(--accent-purple-light) !important;
+    border-color: var(--accent-purple-light) !important;
+    box-shadow: 0 8px 25px rgba(167, 139, 250, 0.4) !important;
+}
+
+/* On mobile, hide the Client Portal Login from the floating actions container to prevent overlapping the brand logo */
+@media (max-width: 768px) {
+    #btn-portal-login-trigger {
+        display: none !important;
+    }
+}

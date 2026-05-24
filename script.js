@@ -677,6 +677,10 @@ function logoutClientPortal() {
     // Show login trigger button
     document.getElementById('btn-portal-login-trigger').style.display = 'inline-flex';
     
+    // Show sidebar login container in the sidebar
+    const sidebarLogin = document.getElementById('vault-sidebar-login-container');
+    if (sidebarLogin) sidebarLogin.style.display = 'block';
+    
     // Reset dashboard trigger button to guest style
     const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
     if (dashboardTrigger) {
@@ -815,6 +819,10 @@ function activateClientPortalTheme(client) {
     // 4. Show logout container in the sidebar
     const logoutContainer = document.getElementById('vault-logout-container');
     if (logoutContainer) logoutContainer.style.display = 'block';
+    
+    // Hide sidebar login container in the sidebar
+    const sidebarLogin = document.getElementById('vault-sidebar-login-container');
+    if (sidebarLogin) sidebarLogin.style.display = 'none';
     
     // 5. Update dashboard trigger button to client style
     const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');

@@ -155,6 +155,12 @@
                     <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
                         <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
                     </button>
+                    <!-- Client Portal Login button in the sidebar (primarily for mobile) -->
+                    <div class="vault-login-container" id="vault-sidebar-login-container" style="width: 100%;">
+                        <button type="button" class="btn-vault-login" onclick="openLoginOverlay()" style="width: 100%;">
+                            <i class="fa-solid fa-user-lock"></i> Client Portal Login
+                        </button>
+                    </div>
                     <div class="vault-logout-container" id="vault-logout-container" style="display: none; width: 100%;">
                         <button type="button" class="btn-vault-logout" onclick="logoutClientPortal()" style="width: 100%;">
                             <i class="fa-solid fa-right-from-bracket"></i> Logout
