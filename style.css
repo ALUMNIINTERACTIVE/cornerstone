@@ -1647,6 +1647,7 @@ footer p {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0 1.5rem !important; /* Explicitly override general header padding to prevent vertical squishing/clipping of the logo on mobile screens */
 }
 
 .minimal-header .header-container {
@@ -2107,8 +2108,25 @@ body.inverted-client-portal .footer-portal-link:hover {
         bottom: 50px;
         height: calc(100vh - 130px);
     }
+    .top-nav-actions {
+        top: 24px;
+        right: 16px;
+        gap: 8px;
+    }
+    .top-nav-actions .theme-switch-label {
+        display: none !important; /* Hide 'Obsidian Theme' label to prevent collision with brand logo on mobile */
+    }
+    .top-nav-actions .theme-switch-container {
+        padding: 0.4rem; /* Compact layout */
+    }
     .top-nav-actions .btn-toggle-vault .btn-text {
-        display: inline-block;
+        display: none !important; /* Hide 'Logout' text to show only the premium icon on mobile screens */
+    }
+    .top-nav-actions .btn-toggle-vault {
+        padding: 0.4rem;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
     }
 }
 
