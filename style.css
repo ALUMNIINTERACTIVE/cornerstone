@@ -1633,9 +1633,16 @@ footer p {
 .minimal-chat-layout {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: -webkit-fill-available;
+    height: fill-available;
     overflow: hidden;
     background-color: var(--bg-secondary);
+}
+
+@media (max-width: 768px) {
+    .minimal-chat-layout {
+        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    }
 }
 
 .minimal-header {
@@ -2102,10 +2109,6 @@ body.inverted-client-portal .footer-portal-link:hover {
 }
 
 @media (max-width: 768px) {
-    :root {
-        --header-height: calc(96px + env(safe-area-inset-top, 0px));
-        --footer-height: calc(60px + env(safe-area-inset-bottom, 0px));
-    }
     .minimal-header {
         padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
         padding-bottom: 8px !important;
