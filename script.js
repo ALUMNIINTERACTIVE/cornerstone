@@ -680,10 +680,6 @@ function logoutClientPortal() {
     const vault = document.getElementById('staging-vault-panel');
     if (vault) vault.classList.remove('open');
     
-    // Show login trigger button
-    const loginTrigger = document.getElementById('btn-portal-login-trigger');
-    if (loginTrigger) loginTrigger.style.display = 'inline-flex';
-
     // Hide logout trigger button
     const logoutTrigger = document.getElementById('btn-portal-logout-trigger');
     if (logoutTrigger) logoutTrigger.style.display = 'none';
@@ -813,11 +809,7 @@ function activateClientPortalTheme(client) {
     // 1. Invert body color theme instantly
     document.body.classList.add('inverted-client-portal');
     
-    // 2. Hide login trigger button
-    const trigger = document.getElementById('btn-portal-login-trigger');
-    if (trigger) trigger.style.display = 'none';
-
-    // 3. Show logout trigger button in footer
+    // Show logout trigger button in top navigation actions
     const logoutTrigger = document.getElementById('btn-portal-logout-trigger');
     if (logoutTrigger) logoutTrigger.style.display = 'inline-flex';
 

@@ -80,6 +80,30 @@ header::before {
     margin-bottom: 0.8rem;
 }
 
+.logo-cube-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+    outline: none;
+    z-index: 10;
+}
+
+.logo-cube-link:hover {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.65));
+}
+
+.logo-cube-link:active {
+    transform: scale(0.92);
+}
+
+body.inverted-client-portal .logo-cube-link:hover {
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+}
+
 .logo i {
     font-size: 2.4rem;
     color: var(--accent-purple);
@@ -1658,6 +1682,9 @@ footer p {
     top: 24px;
     right: 24px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .top-nav-actions .btn-toggle-vault {
@@ -1681,6 +1708,19 @@ footer p {
     color: #ffffff;
     border-color: var(--accent-purple);
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+body.inverted-client-portal .top-nav-actions .btn-toggle-vault {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .top-nav-actions .btn-toggle-vault:hover {
+    background: #ffffff !important;
+    color: #3b0764 !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Close Button in Vault Staging Panel */

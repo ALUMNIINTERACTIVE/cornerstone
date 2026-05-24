@@ -38,13 +38,19 @@
                 <span class="slider round"></span>
             </label>
         </div>
+        <!-- Client Logout Button (hidden by default, shown when logged in) -->
+        <button type="button" class="btn-toggle-vault" id="btn-portal-logout-trigger" onclick="logoutClientPortal()" style="display: none;">
+            <i class="fa-solid fa-right-from-bracket"></i> <span class="btn-text">Logout</span>
+        </button>
     </div>
 
     <!-- Compact Elegant Brand Header -->
     <header class="minimal-header">
         <div class="header-container">
             <div class="logo">
-                <i class="fa-solid fa-cube purple-glow"></i>
+                <a href="#" class="logo-cube-link" onclick="openLoginOverlay(); return false;" title="Client Portal Login">
+                    <i class="fa-solid fa-cube purple-glow"></i>
+                </a>
                 <h1>CORNERSTONE</h1>
             </div>
         </div>
@@ -109,15 +115,8 @@
         <p>
             &copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection. | Designed by <a
                 href="https://www.alumniinteractive.com" target="_blank"
-                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em; margin-right: 5px;">ALUMNI
+                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em;">ALUMNI
                 INTΞRACTIVΞ</a>
-            <span class="footer-divider" style="color: var(--border-color); margin: 0 4px;">|</span>
-            <a href="#" id="btn-portal-login-trigger" class="footer-portal-link" onclick="openLoginOverlay(); return false;">
-                <i class="fa-solid fa-user-lock"></i> Client Portal Login
-            </a>
-            <a href="#" id="btn-portal-logout-trigger" class="footer-portal-link" onclick="logoutClientPortal(); return false;" style="display: none;">
-                <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </a>
         </p>
     </footer>
 
