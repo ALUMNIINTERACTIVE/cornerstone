@@ -40,19 +40,9 @@
         <div class="header-container">
             <!-- Hamburger menu (top-left) -->
             <div id="portal-hamburger-container" class="portal-hamburger-container" style="display: none;">
-                <button type="button" class="btn-hamburger" id="btn-hamburger" onclick="toggleHamburgerMenu(event)" title="Profile Options">
+                <button type="button" class="btn-hamburger" id="btn-hamburger" onclick="toggleVault()" title="Profile Options">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <div class="hamburger-dropdown-content" id="hamburger-dropdown">
-                    <div class="hamburger-profile-info">
-                        <div class="hamburger-welcome-name" id="hamburger-welcome-name">Welcome, [Name]</div>
-                        <div id="hamburger-business-subtitle" class="hamburger-business-subtitle" style="display: none;"></div>
-                    </div>
-                    <hr class="hamburger-divider">
-                    <button type="button" class="hamburger-action-btn" onclick="logoutClientPortal()">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
-                    </button>
-                </div>
             </div>
             
             <div class="logo">
@@ -114,28 +104,28 @@
                 </div>
             </div>
 
-            <!-- Right Panel: Secure Ingestion Staging Vault (Hidden DOM to maintain script sync) -->
-            <div class="staging-vault-panel" id="staging-vault-panel" style="display: none !important;">
+            <!-- Left Side Collapsable Portal Sidebar -->
+            <div class="staging-vault-panel" id="staging-vault-panel">
                 <div class="vault-header">
                     <div class="vault-header-title">
-                        <i class="fa-solid fa-vault"></i>
-                        <h3>Service Request</h3>
+                        <i class="fa-solid fa-cube purple-glow"></i>
+                        <h3>Client Portal</h3>
                     </div>
                     <button type="button" class="btn-close-vault" onclick="toggleVault()">&times;</button>
                 </div>
                 <div class="vault-status-indicator">
                     <span class="vault-led active"></span>
-                    <span class="vault-status-text">Active Encryption Tunnel</span>
+                    <span class="vault-status-text">Active Secure Session</span>
                 </div>
 
                 <div class="vault-fields">
                     <div class="vault-field">
-                        <div class="vault-field-label">Request Type</div>
-                        <div class="vault-field-value" id="vault-badge-type">Awaiting Selection</div>
+                        <div class="vault-field-label">Portal Status</div>
+                        <div class="vault-field-value" id="vault-badge-type">Guest Intake</div>
                     </div>
 
                     <div class="vault-field">
-                        <div class="vault-field-label">Client Name</div>
+                        <div class="vault-field-label">Customer Name</div>
                         <div class="vault-field-value unpopulated" id="vault-identity">Not Detected</div>
                     </div>
 
@@ -150,7 +140,7 @@
                     </div>
 
                     <div class="vault-field">
-                        <div class="vault-field-label" id="vault-scope-label">Driver's License / Change Details</div>
+                        <div class="vault-field-label" id="vault-scope-label">Dossier Details</div>
                         <div class="vault-field-value unpopulated" id="vault-scope">Not Specified</div>
                     </div>
 
@@ -165,9 +155,16 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
-                    <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
-                </button>
+                <div class="vault-actions" style="padding: 1.5rem 1.8rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
+                    <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
+                        <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
+                    </button>
+                    <div class="vault-logout-container" id="vault-logout-container" style="display: none; width: 100%;">
+                        <button type="button" class="btn-vault-logout" onclick="logoutClientPortal()" style="width: 100%;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

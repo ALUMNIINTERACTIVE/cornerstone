@@ -97,20 +97,14 @@ function restoreOptionButtons() {
     });
 }
 
-// ─── HAMBURGER DROPDOWN CONTROLLER ───────────────────────────────────────────
-function toggleHamburgerMenu(e) {
-    if (e) e.stopPropagation();
-    const dropdown = document.getElementById('hamburger-dropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('active');
-    }
-}
-
+// Close left sidebar when clicking outside on the main console area
 document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('hamburger-dropdown');
-    const container = document.getElementById('portal-hamburger-container');
-    if (dropdown && container && !container.contains(e.target)) {
-        dropdown.classList.remove('active');
+    const vault = document.getElementById('staging-vault-panel');
+    const hamburger = document.getElementById('portal-hamburger-container');
+    if (vault && vault.classList.contains('open')) {
+        if (!vault.contains(e.target) && (!hamburger || !hamburger.contains(e.target))) {
+            vault.classList.remove('open');
+        }
     }
 });
 
@@ -216,6 +210,26 @@ function handleWelcomeChoice(action) {
     saveToStorage();
 }
 
+// ─── CHAT HISTORY GATHERER ───────────────────────────────────────────────────
+function getChatHistory() {
+    const messages = [];
+    const container = document.getElementById('console-chat-messages');
+    if (container) {
+        const bubbles = container.querySelectorAll('.chat-message');
+        bubbles.forEach(b => {
+            const isUser = b.classList.contains('user');
+            const p = b.querySelector('p');
+            if (p) {
+                messages.push({
+                    role: isUser ? 'user' : 'assistant',
+                    content: p.innerText
+                });
+            }
+        });
+    }
+    return messages.slice(-10);
+}
+
 // ─── GENERAL CONVERSATION & CHAT CONTROL ─────────────────────────────────────
 async function sendConsoleChatMessage() {
     const inputField = document.getElementById('console-chat-input-field');
@@ -272,11 +286,12 @@ async function sendConsoleChatMessage() {
         // Call backend Gemini/local AI for full conversational richness (handles any topic!)
         try {
             const apiBase = window.location.origin;
+            const history = getChatHistory();
             const res = await fetch(`${apiBase}/api/ai/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: [{ role: 'user', content: text }]
+                    messages: history
                 })
             });
             document.getElementById(loaderId)?.remove();
@@ -360,18 +375,12 @@ async function processIntakeStep(text) {
 // ─── PHASE 2 DIALOGUE ENGINE (LOGGED IN PORTAL) ──────────────────────────────
 async function processPhase2Dialogue(text) {
     const loaderId = appendConsoleLoaderUI();
-    await sleep(450);
-    document.getElementById(loaderId)?.remove();
 
     const lower = text.toLowerCase();
 
     // Check for explicit updates / driver additions
     if (lower.includes('add driver') || lower.includes('driver') || lower.includes('policy update') || lower.includes('update policy')) {
         await submitPortalUpdateMessage(text);
-        appendConsoleMessageUI('assistant', 
-            `Thank you, ${loggedInClient.name}! I have submitted your requested update ("${text}") directly to our underwriting dashboard.\n\nOur agent console will register this notification instantly.`
-        );
-        return;
     }
 
     // Direct conversational inputs for EIN or Business Name
@@ -383,9 +392,6 @@ async function processPhase2Dialogue(text) {
         }
         vaultState.ein = ein;
         await updateTelemetryOnServer();
-        appendConsoleMessageUI('assistant', `✅ Success: I have updated your Employer Identification Number (EIN) to: ${ein}.`);
-        checkPhase2Completion();
-        return;
     }
 
     // Conversational business name detection
@@ -393,12 +399,37 @@ async function processPhase2Dialogue(text) {
         let bName = text.replace(/my business is|business name is|company is/gi, '').trim();
         vaultState.businessName = bName;
         await updateTelemetryOnServer();
-        appendConsoleMessageUI('assistant', `✅ Success: I have set your Legal Business Name to: ${bName}.`);
-        checkPhase2Completion();
-        return;
     }
 
-    // If still missing info, guide them conversationally
+    // Call backend Gemini/local AI for full conversational richness (keeps track of what info is provided and pushes for missing)
+    try {
+        const apiBase = window.location.origin;
+        const history = getChatHistory();
+        const res = await fetch(`${apiBase}/api/ai/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: history,
+                vaultState: vaultState
+            })
+        });
+        document.getElementById(loaderId)?.remove();
+        if (res.ok) {
+            const data = await res.json();
+            appendConsoleMessageUI('assistant', data.reply);
+        } else {
+            throw new Error("API call failed");
+        }
+    } catch(e) {
+        document.getElementById(loaderId)?.remove();
+        appendConsoleMessageUI('assistant', buildFallbackPhase2Guide());
+    }
+
+    updateStagingVaultUI();
+    saveToStorage();
+}
+
+function buildFallbackPhase2Guide() {
     let reply = `Welcome, ${loggedInClient.name}! To complete your commercial trucking insurance quote estimate, please provide the remaining details:\n\n`;
     let count = 1;
     
@@ -416,12 +447,11 @@ async function processPhase2Dialogue(text) {
     }
 
     if (count === 1) {
-        reply = `All documents and details have been successfully uploaded, ${loggedInClient.name}!\n\nAn agent will be in touch with you shortly after uploading the remaining documents.\n\nIf you need to make changes or request policy modifications (like adding drivers), simply type them here in the chat.`;
+        reply = `All documents and details have been successfully uploaded, ${loggedInClient.name}!\n\nAn agent will be in touch with you shortly after uploading the remaining documents.`;
     } else {
         reply += `\nFeel free to ask me general questions about insurance, deductibles, or coverages at any time!`;
     }
-
-    appendConsoleMessageUI('assistant', reply);
+    return reply;
 }
 
 // ─── AUTH OVERLAY ACTIONS ────────────────────────────────────────────────────
@@ -628,11 +658,17 @@ function logoutClientPortal() {
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
-    // Hide hamburger menu container and close dropdown
+    // Hide hamburger menu container
     const hamburgerContainer = document.getElementById('portal-hamburger-container');
     if (hamburgerContainer) hamburgerContainer.style.display = 'none';
-    const dropdown = document.getElementById('hamburger-dropdown');
-    if (dropdown) dropdown.classList.remove('active');
+    
+    // Hide logout container
+    const logoutContainer = document.getElementById('vault-logout-container');
+    if (logoutContainer) logoutContainer.style.display = 'none';
+
+    // Close the collapsable left sidebar
+    const vault = document.getElementById('staging-vault-panel');
+    if (vault) vault.classList.remove('open');
     
     // Show login trigger button
     document.getElementById('btn-portal-login-trigger').style.display = 'inline-flex';
@@ -766,21 +802,13 @@ function activateClientPortalTheme(client) {
     const trigger = document.getElementById('btn-portal-login-trigger');
     if (trigger) trigger.style.display = 'none';
     
-    // 3. Render dynamic profile inside hamburger menu
+    // 3. Show hamburger menu container
     const hamburgerContainer = document.getElementById('portal-hamburger-container');
-    if (hamburgerContainer) {
-        hamburgerContainer.style.display = 'block';
-        document.getElementById('hamburger-welcome-name').innerText = `Welcome, ${client.name}`;
-        
-        // Show business name under full name if set
-        const subTitle = document.getElementById('hamburger-business-subtitle');
-        if (client.businessName) {
-            subTitle.innerText = client.businessName;
-            subTitle.style.display = 'block';
-        } else {
-            subTitle.style.display = 'none';
-        }
-    }
+    if (hamburgerContainer) hamburgerContainer.style.display = 'block';
+
+    // 4. Show logout container in the sidebar
+    const logoutContainer = document.getElementById('vault-logout-container');
+    if (logoutContainer) logoutContainer.style.display = 'block';
     
     // Sync vaultState
     vaultState.email = client.email;

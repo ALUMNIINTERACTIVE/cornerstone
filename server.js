@@ -286,7 +286,7 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
     }
 
     // 2. Fall back to local Ollama on port 11434
-    const modelsToTry = ['llama3.2-vision', 'llava', 'qwen2-vl', 'llama3:8b-instruct-q4_K_M', 'llama3'];
+    const modelsToTry = ['dolphin-llama3:latest', 'qwen2.5-coder:7b', 'llama3.2-vision', 'llava', 'qwen2-vl', 'llama3:8b-instruct-q4_K_M', 'llama3'];
     
     for (const model of modelsToTry) {
         try {
@@ -687,7 +687,7 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
     console.log(`[CHAT_AI] Processing client chat message prompt (Upload: ${req.file ? req.file.filename : 'None'})...`);
 
     // Ensure the system message is prepended or set correctly
-    const systemPrompt = `You are a helpful, professional AI customer assistant at Cornerstone Insurance Firm.
+    let systemPrompt = `You are a helpful, professional AI customer assistant at Cornerstone Insurance Firm.
     Greet users warmly. You are the direct conversational front-door for all client submissions.
     To help clients submit an inquiry or stage a policy change, you must politely guide them to provide:
     1. Full Name
@@ -697,6 +697,31 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
     5. A supporting document/image if required (instruct them to click the paperclip upload icon next to the chat bar or drag files here).
     
     Instruct the client to review the details compiled in real-time in the "Secure Ingestion Vault" panel at the right and click "Verify & Submit Dossier" once they are ready. Keep answers concise, classical, and elegant to match our luxury Times New Roman theme.`;
+
+    if (req.body.vaultState) {
+        const v = req.body.vaultState;
+        systemPrompt = `You are the dedicated AI customer assistant at Cornerstone Insurance Firm.
+        An active client is logged in:
+        - Full Name: ${v.fullName || 'Not Detected'}
+        - Email: ${v.email || 'Not Detected'}
+        - Phone: ${v.phone || 'Not Detected'}
+        - Effective Date: ${v.effectiveDate || 'Not Specified'}
+        
+        Their current commercial trucking insurance quote telemetry and document staging status is:
+        - Legal Business Name: ${v.businessName ? `Provided: "${v.businessName}"` : 'PENDING (Awaiting input)'}
+        - EIN (Employer Identification Number): ${v.ein ? `Provided: "${v.ein}"` : 'PENDING (Awaiting input)'}
+        - Owner\'s Driver\'s License Photo: ${v.driversLicense ? 'UPLOADED (Ingested)' : 'PENDING (Awaiting upload)'}
+        - Vehicle VIN Photo: ${v.vin ? 'UPLOADED (Ingested)' : 'PENDING (Awaiting upload)'}
+        
+        Your primary goal is to naturally converse with the client, answer any general questions they have (about insurance or other topics), but politely and actively keep track of what information has been provided and what is still needed. 
+        You must gently guide and push the client to upload/provide the pending information so our underwriters can formulate the proper quote.
+        
+        Specifically:
+        - If they have not provided their Legal Business Name or EIN, ask them for it. (Do not write placeholders or raw asterisks. Keep copy clean and plain).
+        - If they have yet to upload the Owner's Driver's License photo or Vehicle VIN Photo, tell them they can upload these documents easily by clicking the "+" icon in the bottom-left corner of the chat input row.
+        - Once all 4 telemetry items (Business Name, EIN, DL Photo, and VIN Photo) are complete, tell them: "All documents and details have been successfully received and validated! An agent will be in touch with you shortly after uploading the remaining documents."
+        - Keep answers concise, helpful, elite, and professional. Avoid writing raw asterisks (**) or markdown formatting for emphasis. Use natural punctuation.`;
+    }
 
     const formattedMessages = [
         { role: 'system', content: systemPrompt },
@@ -783,7 +808,7 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
     }
 
     // 2. Try standard local instruct models
-    const modelsToTry = ['llama3:8b-instruct-q4_K_M', 'llama3', 'llava', 'llama3.2-vision'];
+    const modelsToTry = ['dolphin-llama3:latest', 'qwen2.5-coder:7b', 'llama3:8b-instruct-q4_K_M', 'llama3', 'llava', 'llama3.2-vision'];
     
     for (const model of modelsToTry) {
         try {

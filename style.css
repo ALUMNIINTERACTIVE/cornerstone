@@ -1697,13 +1697,14 @@ footer p {
 }
 
 /* Immersive Chat Layout */
-main {
+.minimal-chat-layout main {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0 1.5rem;
     width: 100%;
+    overflow: hidden; /* Prevent chat from covering footer/header */
 }
 
 .minimal-chat-layout .chat-console-container {
@@ -1717,16 +1718,20 @@ main {
     background: transparent;
     border: none;
     box-shadow: none;
-    overflow: visible;
+    overflow: hidden; /* Bound layout strictly inside main */
 }
 
 .minimal-chat-core {
     width: 100%;
     max-width: 680px;
+    height: 100%; /* Fill the container space */
+    max-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* Centered layout when empty, flex-grow takes over when active */
+    box-sizing: border-box;
+    padding: 1.5rem 0; /* Add visual spacing from header and footer */
     position: relative;
     transition: var(--transition-smooth);
 }
@@ -1750,6 +1755,10 @@ main {
     background: transparent;
     border: none;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    min-height: 0;
     height: 0;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1887,7 +1896,9 @@ main {
 }
 
 .chat-active .chat-thread-panel {
-    height: calc(100vh - 230px);
+    flex-grow: 1; /* Fill all remaining vertical space inside minimal-chat-core */
+    min-height: 0; /* Allow the panel to shrink and scroll instead of expanding parent */
+    height: auto; /* Let flexbox control the height */
     opacity: 1;
     margin-bottom: 1rem;
 }
@@ -1897,20 +1908,103 @@ main {
    ========================================================================== */
 
 .minimal-chat-layout .staging-vault-panel {
-    display: none !important;
+    display: flex !important;
+    position: fixed;
+    top: 0;
+    left: -340px; /* Initially hidden on the left */
+    width: 320px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 15px 0 35px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    flex-direction: column;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .minimal-chat-layout .staging-vault-panel.open {
-    right: 0;
-    box-shadow: -15px 0 35px rgba(124, 58, 237, 0.08);
+    left: 0 !important; /* Slide in! */
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.15), 0 0 30px rgba(124, 58, 237, 0.1);
 }
 
+/* Inverted purple client portal styling for the left sidebar */
+body.inverted-client-portal .staging-vault-panel {
+    background: rgba(30, 27, 75, 0.96) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 15px 0 35px rgba(0, 0, 0, 0.3) !important;
+    color: #ffffff !important;
+}
+
+body.inverted-client-portal .staging-vault-panel.open {
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(167, 139, 250, 0.2) !important;
+}
+
+/* Make sure header and standard spacing looks luxury and tight */
 .minimal-chat-layout .vault-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 1.5rem;
+    padding: 1.5rem 1.8rem;
     border-bottom: 1px solid var(--border-color);
+}
+
+body.inverted-client-portal .minimal-chat-layout .vault-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.minimal-chat-layout .btn-close-vault {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    transition: var(--transition-smooth);
+}
+
+body.inverted-client-portal .minimal-chat-layout .btn-close-vault {
+    color: #cbd5e1 !important;
+}
+
+.minimal-chat-layout .btn-close-vault:hover {
+    color: #ef4444 !important;
+    transform: scale(1.1);
+}
+
+/* Styled Logout button in the sidebar */
+.btn-vault-logout {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #ef4444;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border-radius: var(--border-radius);
+    font-family: var(--font-luxury);
+}
+
+.btn-vault-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+body.inverted-client-portal .btn-vault-logout {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #ff8a8a !important;
+}
+
+body.inverted-client-portal .btn-vault-logout:hover {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
 }
 
 .minimal-chat-layout .vault-header-title {
