@@ -459,6 +459,14 @@
             color: var(--text-light);
             letter-spacing: 0.02em;
             margin-bottom: 3px;
+            cursor: pointer;
+            transition: var(--transition-premium);
+            width: fit-content;
+        }
+
+        .client-name:hover {
+            color: var(--text-purple);
+            text-decoration: underline;
         }
 
         .client-email {
@@ -1735,7 +1743,7 @@
                         <div class="client-info-block">
                             <div class="card-header-row">
                                 <div class="client-meta">
-                                    <div class="client-name">${escapeHtml(submission.name)}</div>
+                                    <div class="client-name" onclick="selectSuggestion('${escapeHtml(submission.name)}')" title="Click to view client profile">${escapeHtml(submission.name)}</div>
                                     <a href="mailto:${submission.email}" class="client-email">
                                         <i class="fa-solid fa-envelope"></i> ${escapeHtml(submission.email)}
                                     </a>
@@ -1766,8 +1774,8 @@
                         <div class="verdict-glass-block">
                             <div class="verdict-header">
                                 <div class="verdict-title">
-                                    <i class="fa-solid fa-microchip-ai" style="color: var(--text-purple); font-size: 1.1rem; margin-right: 6px;"></i> 
-                                    Local Risk Verdict
+                                    <i class="fa-solid fa-user-check" style="color: var(--text-purple); font-size: 1.1rem; margin-right: 6px;"></i> 
+                                    Client Status
                                 </div>
                                 <div class="verdict-status ${statusType}">
                                     <i class="fa-solid ${statusIcon}"></i>
@@ -1782,12 +1790,8 @@
                             
                             <div class="risk-row">
                                 <div class="verdict-row">
-                                    <div class="verdict-label">Risk Profile</div>
-                                    <div class="risk-badge ${riskClass}">${riskProfile}</div>
-                                </div>
-                                <div class="verdict-row" style="text-align: right; align-items: flex-end;">
                                     <div class="verdict-label">Suggested Limit Scope</div>
-                                    <div class="verdict-value" style="color: var(--text-purple); font-weight: bold;">
+                                    <div class="verdict-value" style="color: var(--text-purple); font-weight: bold; margin-top: 4px;">
                                         ${escapeHtml(verdict.recommendedCoverageLimits || 'N/A')}
                                     </div>
                                 </div>
