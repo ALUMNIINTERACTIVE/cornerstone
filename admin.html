@@ -1388,8 +1388,8 @@
             const uncheckedCount = submissionsList.filter(s => !acknowledgedIds.has(s.id)).length;
             
             // Completeness rate across new client request profiles based on 7 required fields
-            const clients = submissionsList.filter(s => s.type === 'new_client_request');
-            let verifiedRate = 100;
+            const clients = submissionsList.filter(s => s.type === 'new_client_request' || s.type === 'new_policy');
+            let verifiedRate = 0;
             if (clients.length > 0) {
                 const totalCompleteness = clients.reduce((acc, client) => {
                     let completedCount = 0;
@@ -1476,7 +1476,13 @@
             // Filter by Type
             let filtered = submissionsList;
             if (activeTypeFilter !== 'all') {
-                filtered = filtered.filter(s => s.type === activeTypeFilter);
+                if (activeTypeFilter === 'consultation') {
+                    filtered = filtered.filter(s => s.type === 'consultation' || s.type === 'new_client_request' || s.type === 'new_policy');
+                } else if (activeTypeFilter === 'policy_change') {
+                    filtered = filtered.filter(s => s.type === 'policy_change' || s.type === 'portal_update');
+                } else {
+                    filtered = filtered.filter(s => s.type === activeTypeFilter);
+                }
             }
             
             // Filter by Search Query
@@ -2012,7 +2018,6 @@
             closeSuggestions();
             setFilterType('all');
             fetchSubmissions();
-            showNotification('🔄 Search cleared & database refreshed.');
         }
         
         function showDocumentPreview(imagePath) {
