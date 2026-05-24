@@ -14,15 +14,18 @@
     --text-main: #1e1b4b;
     --text-secondary: #475569;
     --border-color: #f1ecfe;
-    
+
     /* Layout & Styling */
-    --header-height: 80px; /* Core height of the minimal brand header */
-    --footer-height: 50px; /* Core height of the brand editorial footer */
+    --header-height: 80px;
+    /* Core height of the minimal brand header */
+    --footer-height: 70px;
+    /* Core height of the brand editorial footer */
     --font-luxury: 'Times New Roman', Times, Baskerville, Georgia, serif;
     --shadow-premium: 0 10px 30px -10px rgba(124, 58, 237, 0.08);
     --shadow-premium-hover: 0 20px 40px -10px rgba(124, 58, 237, 0.16);
     --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    --border-radius: 4px; /* Classic, sharp luxury edges */
+    --border-radius: 4px;
+    /* Classic, sharp luxury edges */
 }
 
 /* Base Resets */
@@ -61,7 +64,7 @@ header::before {
     transform: translateX(-50%);
     width: 600px;
     height: 300px;
-    background: radial-gradient(circle, rgba(167, 139, 250, 0.08) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
     z-index: 1;
     pointer-events: none;
 }
@@ -246,7 +249,7 @@ main {
     right: 0;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
     z-index: 1;
     pointer-events: none;
 }
@@ -263,7 +266,7 @@ main {
     font-weight: 400;
     margin-bottom: 1.5rem;
     letter-spacing: 0.03em;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .hero-section p {
@@ -284,14 +287,14 @@ main {
     letter-spacing: 0.15em;
     padding: 1rem 2.2rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: var(--transition-smooth);
     border: 1px solid transparent;
 }
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25), 0 0 15px rgba(255,255,255,0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.4);
     background-color: transparent;
     color: white;
     border-color: white;
@@ -344,7 +347,7 @@ section:hover {
     color: var(--text-secondary);
 }
 
-#about p + p {
+#about p+p {
     margin-top: 1.2rem;
 }
 
@@ -494,7 +497,7 @@ section:hover {
     box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
 }
 
-.info-item > div {
+.info-item>div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -628,10 +631,13 @@ footer p {
 
 /* Core Animations */
 @keyframes pulseGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         opacity: 1;
     }
+
     50% {
         transform: scale(1.05);
         opacity: 0.85;
@@ -651,38 +657,38 @@ footer p {
     header {
         padding: 2.5rem 1rem;
     }
-    
+
     .logo h1 {
         font-size: 1.8rem;
     }
-    
+
     nav ul {
         flex-direction: column;
         padding: 0.5rem 0;
     }
-    
+
     nav ul li {
         margin: 0;
     }
-    
+
     nav ul li a {
         padding: 0.8rem 2rem;
         justify-content: center;
     }
-    
+
     main {
         padding: 0 1.2rem;
         margin: 2rem auto;
     }
-    
+
     .hero-section {
         padding: 3.5rem 1.5rem;
     }
-    
+
     .hero-section h2 {
         font-size: 2rem;
     }
-    
+
     section {
         padding: 2.5rem 1.8rem;
     }
@@ -937,7 +943,8 @@ footer p {
 .chat-message {
     max-width: 80%;
     padding: 0.9rem 1.4rem;
-    border-radius: 20px; /* Highly rounded premium chat bubbles */
+    border-radius: 20px;
+    /* Highly rounded premium chat bubbles */
     font-size: 0.95rem;
     line-height: 1.6;
     position: relative;
@@ -953,8 +960,9 @@ footer p {
     color: var(--text-main);
     align-self: flex-start;
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    border-bottom-left-radius: 4px; /* Organic conversation edge */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    border-bottom-left-radius: 4px;
+    /* Organic conversation edge */
 }
 
 .chat-message.user {
@@ -962,7 +970,8 @@ footer p {
     color: white;
     align-self: flex-end;
     box-shadow: 0 4px 10px rgba(124, 58, 237, 0.25);
-    border-bottom-right-radius: 4px; /* Organic conversation edge */
+    border-bottom-right-radius: 4px;
+    /* Organic conversation edge */
 }
 
 /* Chat Inputs */
@@ -1023,15 +1032,23 @@ footer p {
     animation: chatDotBounce 1.4s infinite both;
 }
 
-.chat-dot:nth-child(2) { animation-delay: 0.2s; }
-.chat-dot:nth-child(3) { animation-delay: 0.4s; }
+.chat-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.chat-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
 
 /* Custom Animations */
 @keyframes previewGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 10px rgba(124, 58, 237, 0.08);
         border-color: rgba(124, 58, 237, 0.15);
     }
+
     50% {
         box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
         border-color: rgba(124, 58, 237, 0.4);
@@ -1039,9 +1056,17 @@ footer p {
 }
 
 @keyframes pulseActive {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
 }
 
 @keyframes chatMsgFade {
@@ -1049,6 +1074,7 @@ footer p {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1056,8 +1082,16 @@ footer p {
 }
 
 @keyframes chatDotBounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1); }
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+
+    40% {
+        transform: scale(1);
+    }
 }
 
 /* Responsive constraints */
@@ -1068,7 +1102,7 @@ footer p {
         bottom: 90px;
         height: 400px;
     }
-    
+
     .chat-widget-trigger {
         bottom: 20px;
         right: 20px;
@@ -1172,7 +1206,8 @@ footer p {
     gap: 8px;
     background: #ffffff;
     border: 1px solid var(--border-color);
-    border-radius: 28px; /* Smooth pill shape */
+    border-radius: 28px;
+    /* Smooth pill shape */
     padding: 4px 6px 4px 12px;
     transition: var(--transition-smooth);
     width: 100%;
@@ -1205,8 +1240,10 @@ footer p {
 
 .chat-panel-input-container input[type="text"] {
     flex-grow: 1;
-    border: none !important; /* Remove individual border */
-    background: transparent !important; /* Transparent wrapper */
+    border: none !important;
+    /* Remove individual border */
+    background: transparent !important;
+    /* Transparent wrapper */
     padding: 0.6rem 0.4rem;
     font-family: var(--font-luxury);
     font-size: 1.05rem;
@@ -1424,10 +1461,12 @@ footer p {
         grid-template-columns: 1fr;
         min-height: auto;
     }
+
     .chat-thread-panel {
         border-right: none;
         border-bottom: 1px solid var(--border-color);
     }
+
     .staging-vault-panel {
         border-left: none;
     }
@@ -1452,7 +1491,8 @@ footer p {
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 0.75rem 1.5rem;
-    border-radius: 24px; /* Highly rounded luxury buttons */
+    border-radius: 24px;
+    /* Highly rounded luxury buttons */
     font-family: var(--font-luxury);
     font-size: 0.85rem;
     letter-spacing: 0.15em;
@@ -1669,7 +1709,8 @@ footer p {
     align-items: center;
     justify-content: center;
     padding: 0 1.5rem !important;
-    overflow: visible !important; /* Override general header overflow:hidden to prevent cube icon being clipped */
+    overflow: visible !important;
+    /* Override general header overflow:hidden to prevent cube icon being clipped */
 }
 
 .minimal-header .header-container {
@@ -1771,7 +1812,8 @@ body.inverted-client-portal .top-nav-actions .btn-toggle-vault:hover {
     align-items: center;
     padding: 0 1.5rem;
     width: 100%;
-    overflow: hidden; /* Prevent chat from covering footer/header */
+    overflow: hidden;
+    /* Prevent chat from covering footer/header */
 }
 
 .minimal-chat-layout .chat-console-container {
@@ -1785,20 +1827,24 @@ body.inverted-client-portal .top-nav-actions .btn-toggle-vault:hover {
     background: transparent;
     border: none;
     box-shadow: none;
-    overflow: hidden; /* Bound layout strictly inside main */
+    overflow: hidden;
+    /* Bound layout strictly inside main */
 }
 
 .minimal-chat-core {
     width: 100%;
     max-width: 680px;
-    height: 100%; /* Fill the container space */
+    height: 100%;
+    /* Fill the container space */
     max-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Centered layout when empty, flex-grow takes over when active */
+    justify-content: center;
+    /* Centered layout when empty, flex-grow takes over when active */
     box-sizing: border-box;
-    padding: 1.5rem 0; /* Add visual spacing from header and footer */
+    padding: 1.5rem 0;
+    /* Add visual spacing from header and footer */
     position: relative;
     transition: var(--transition-smooth);
 }
@@ -1848,7 +1894,8 @@ body.inverted-client-portal .top-nav-actions .btn-toggle-vault:hover {
     gap: 12px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 36px; /* High radius search bar */
+    border-radius: 36px;
+    /* High radius search bar */
     padding: 8px 8px 8px 16px;
     transition: var(--transition-smooth);
     width: 100%;
@@ -1963,9 +2010,12 @@ body.inverted-client-portal .top-nav-actions .btn-toggle-vault:hover {
 }
 
 .chat-active .chat-thread-panel {
-    flex-grow: 1; /* Fill all remaining vertical space inside minimal-chat-core */
-    min-height: 0; /* Allow the panel to shrink and scroll instead of expanding parent */
-    height: auto; /* Let flexbox control the height */
+    flex-grow: 1;
+    /* Fill all remaining vertical space inside minimal-chat-core */
+    min-height: 0;
+    /* Allow the panel to shrink and scroll instead of expanding parent */
+    height: auto;
+    /* Let flexbox control the height */
     opacity: 1;
     margin-bottom: 1rem;
 }
@@ -2125,12 +2175,14 @@ body.inverted-client-portal .footer-portal-link:hover {
         padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
         padding-bottom: 8px !important;
     }
+
     footer {
         height: var(--footer-height) !important;
         padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         align-items: flex-start !important;
         padding-top: 12px !important;
     }
+
     .minimal-chat-layout .staging-vault-panel {
         width: 100%;
         left: -100%;
@@ -2140,20 +2192,25 @@ body.inverted-client-portal .footer-portal-link:hover {
         bottom: var(--footer-height, 50px) !important;
         height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 50px)) !important;
     }
+
     .top-nav-actions {
         top: calc(22px + env(safe-area-inset-top, 0px));
         right: 16px;
         gap: 8px;
     }
+
     .top-nav-actions .theme-switch-label {
         display: none !important;
     }
+
     .top-nav-actions .theme-switch-container {
         padding: 0.4rem;
     }
+
     .top-nav-actions .btn-toggle-vault .btn-text {
         display: none !important;
     }
+
     .top-nav-actions .btn-toggle-vault {
         padding: 0.4rem;
         width: 36px;
@@ -2170,18 +2227,24 @@ body.inverted-client-portal .footer-portal-link:hover {
     width: 100vw;
     height: 100vh;
     z-index: 0;
-    pointer-events: none; /* Let clicks pass through to content! */
+    pointer-events: none;
+    /* Let clicks pass through to content! */
 }
 
 /* ==========================================================================
    PORTAL COLOR THEME INVERSION (White is Purple, Purple is White)
    ========================================================================== */
 body.inverted-client-portal {
-    --bg-primary: #3b0764; /* Obsidian Deep Imperial Purple */
-    --bg-secondary: #581c87; /* Luxury Royal Purple */
-    --text-main: #ffffff; /* Elegant White Text */
-    --text-secondary: #cbd5e1; /* Soft Lavender Slate */
-    --border-color: rgba(255, 255, 255, 0.18); /* Translucent Glass Borders */
+    --bg-primary: #3b0764;
+    /* Obsidian Deep Imperial Purple */
+    --bg-secondary: #581c87;
+    /* Luxury Royal Purple */
+    --text-main: #ffffff;
+    /* Elegant White Text */
+    --text-secondary: #cbd5e1;
+    /* Soft Lavender Slate */
+    --border-color: rgba(255, 255, 255, 0.18);
+    /* Translucent Glass Borders */
 }
 
 body.inverted-client-portal .minimal-header {
@@ -2316,6 +2379,7 @@ body.inverted-client-portal footer p a {
         opacity: 0;
         transform: translateY(25px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -2566,20 +2630,24 @@ body.inverted-client-portal .hamburger-action-btn:hover {
 
 /* 1. Desktop Mode (min-width: 769px) - Docked Permanent Sidebar */
 @media (min-width: 769px) {
+
     /* The sidebar panel: fixed position, flush from left screen edge, bounded between header and footer */
     .minimal-chat-layout .staging-vault-panel {
         display: flex !important;
         position: fixed !important;
         top: var(--header-height, 80px) !important;
         bottom: var(--footer-height, 50px) !important;
-        left: -320px !important; /* Hidden offscreen by default when body.sidebar-closed */
+        left: -320px !important;
+        /* Hidden offscreen by default when body.sidebar-closed */
         width: 320px !important;
         height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 50px)) !important;
-        background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important; /* Premium guest dark purple gradient */
+        background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important;
+        /* Premium guest dark purple gradient */
         color: #ffffff !important;
         border-right: 1px solid rgba(124, 58, 237, 0.15) !important;
         border-left: none !important;
-        border-radius: 0 16px 16px 0 !important; /* Premium flush-drawer edge rounding */
+        border-radius: 0 16px 16px 0 !important;
+        /* Premium flush-drawer edge rounding */
         box-shadow: 15px 0 35px rgba(0, 0, 0, 0.15) !important;
         z-index: 1000 !important;
         transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -2610,13 +2678,17 @@ body.inverted-client-portal .hamburger-action-btn:hover {
 
 /* 2. Mobile Mode (max-width: 768px) - Clean Slide-Out Overlay Drawer */
 @media (max-width: 768px) {
+
     /* Sidebar acts as overlay sliding in from the left edge */
     .minimal-chat-layout .staging-vault-panel {
         display: flex !important;
         position: fixed !important;
-        top: var(--header-height, 80px) !important; /* Stop at bottom of header */
-        bottom: var(--footer-height, 50px) !important; /* Stop at top of footer */
-        left: -100% !important; /* Hidden left offscreen by default */
+        top: var(--header-height, 80px) !important;
+        /* Stop at bottom of header */
+        bottom: var(--footer-height, 50px) !important;
+        /* Stop at top of footer */
+        left: -100% !important;
+        /* Hidden left offscreen by default */
         width: 100% !important;
         height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 50px)) !important;
         background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important;
@@ -2726,7 +2798,8 @@ body.inverted-client-portal .btn-sidebar-toggle:hover {
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    display: none !important; /* Managed by .sidebar-closed class */
+    display: none !important;
+    /* Managed by .sidebar-closed class */
 }
 
 /* Open toggle sits inside the sidebar header on the right */
@@ -2890,12 +2963,12 @@ body.inverted-client-portal .theme-switch-container {
     transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: var(--accent-purple-light);
     border-color: var(--accent-purple-light);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(16px);
     background-color: #ffffff;
 }
