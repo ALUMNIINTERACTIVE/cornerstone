@@ -2428,74 +2428,61 @@ body.inverted-client-portal .hamburger-action-btn:hover {
 
 /* 1. Desktop Mode (min-width: 769px) - Docked Permanent Sidebar */
 @media (min-width: 769px) {
-    /* Main container spans full width to accommodate the sidebar side-by-side */
-    .minimal-chat-layout .chat-console-container {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: 100% !important;
+    /* The sidebar panel: fixed position, flush from left screen edge, bounded between header and footer */
+    .minimal-chat-layout .staging-vault-panel {
         display: flex !important;
-        flex-direction: row !important;
-        align-items: stretch !important;
-        justify-content: flex-start !important;
-        overflow: hidden !important;
-    }
-
-    /* Sidebar docks permanently on the left side of the main container when open */
-    .minimal-chat-layout .staging-vault-panel.open {
-        display: flex !important;
-        position: relative !important;
-        top: 0 !important;
-        bottom: 0 !important;
-        left: 0 !important;
+        position: fixed !important;
+        top: 80px !important;
+        bottom: 50px !important;
+        left: -320px !important; /* Hidden offscreen by default when body.sidebar-closed */
         width: 320px !important;
-        height: 100% !important;
+        height: calc(100vh - 130px) !important;
         background: linear-gradient(180deg, #16112c 0%, #0d091e 100%) !important; /* Premium guest dark purple gradient */
         color: #ffffff !important;
         border-right: 1px solid rgba(124, 58, 237, 0.15) !important;
         border-left: none !important;
-        border-radius: 0 !important; /* Docked flush, no rounded corners */
-        box-shadow: none !important; /* Flat structural element */
-        margin: 0 !important;
-        z-index: 10 !important;
+        border-radius: 0 16px 16px 0 !important; /* Premium flush-drawer edge rounding */
+        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.15) !important;
+        z-index: 1000 !important;
+        transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
-    /* Sidebar is hidden when closed on desktop */
-    .minimal-chat-layout .staging-vault-panel:not(.open) {
-        display: none !important;
+    /* When open, slide the sidebar into view */
+    .minimal-chat-layout .staging-vault-panel.open {
+        left: 0 !important;
     }
 
-    /* Inverted purple client portal styling for the docked sidebar when open */
-    body.inverted-client-portal.minimal-chat-layout .staging-vault-panel.open {
+    /* Inverted purple client portal styling for the docked sidebar */
+    body.inverted-client-portal.minimal-chat-layout .staging-vault-panel {
         background: rgba(30, 27, 75, 0.96) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Main chat pane expands to take up remaining width, beautifully centered */
-    .minimal-chat-layout .minimal-chat-core {
-        flex: 1 !important;
-        max-width: 680px !important;
-        margin: 0 auto !important;
-        height: 100% !important;
+    /* Shift the chat console container to the right when the sidebar is open */
+    body:not(.sidebar-closed).minimal-chat-layout .chat-console-container {
+        padding-left: 320px !important;
     }
 
-    /* Hide the close button altogether since the panel is permanent structural layout */
+    /* Smooth transition for the chat container shifting */
+    .minimal-chat-layout .chat-console-container {
+        transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        max-width: 800px !important;
+        width: 100% !important;
+    }
+
+    /* Expand the container's max-width when sidebar is open to preserve chat width */
+    body:not(.sidebar-closed).minimal-chat-layout .chat-console-container {
+        max-width: 1120px !important; /* 800px chat width + 320px sidebar width! */
+    }
+
+    /* Hide standard close button since we have the top-right toggle button */
     .minimal-chat-layout .btn-close-vault {
         display: none !important;
-    }
-
-    /* Show the floating actions dashboard trigger button on desktop */
-    #btn-portal-dashboard-trigger {
-        display: inline-flex !important;
     }
 }
 
 /* 2. Mobile Mode (max-width: 768px) - Clean Slide-Out Overlay Drawer */
 @media (max-width: 768px) {
-    /* Show dashboard trigger button in the top actions bar on mobile */
-    #btn-portal-dashboard-trigger {
-        display: inline-flex !important;
-    }
-
     /* Sidebar acts as overlay sliding in from the left edge */
     .minimal-chat-layout .staging-vault-panel {
         display: flex !important;

@@ -101,10 +101,11 @@ function restoreOptionButtons() {
 document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768) {
         const vault = document.getElementById('staging-vault-panel');
-        const trigger = document.getElementById('btn-portal-dashboard-trigger');
+        const toggleClosed = document.getElementById('btn-sidebar-toggle-closed');
         if (vault && vault.classList.contains('open')) {
-            if (!vault.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+            if (!vault.contains(e.target) && (!toggleClosed || !toggleClosed.contains(e.target))) {
                 vault.classList.remove('open');
+                document.body.classList.add('sidebar-closed');
             }
         }
     }
@@ -686,12 +687,6 @@ function logoutClientPortal() {
     const sidebarLogin = document.getElementById('vault-sidebar-login-container');
     if (sidebarLogin) sidebarLogin.style.display = 'block';
     
-    // Reset dashboard trigger button to guest style
-    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
-    if (dashboardTrigger) {
-        dashboardTrigger.innerHTML = '<i class="fa-solid fa-folder-open"></i> <span class="btn-text">Secure Vault</span>';
-    }
-    
     // Reset inputs
     resetConversation();
     showPortalNotification('🔒 Session closed. Returned to secure guest terminal.');
@@ -834,12 +829,6 @@ function activateClientPortalTheme(client) {
     if (themeSwitch) themeSwitch.style.display = 'flex';
     const themeCheckbox = document.getElementById('theme-toggle-checkbox');
     if (themeCheckbox) themeCheckbox.checked = true;
-    
-    // 5. Update dashboard trigger button to client style
-    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
-    if (dashboardTrigger) {
-        dashboardTrigger.innerHTML = '<i class="fa-solid fa-chart-pie"></i> <span class="btn-text">Dashboard</span>';
-    }
     
     // Sync vaultState
     vaultState.email = client.email;
