@@ -658,9 +658,9 @@ function logoutClientPortal() {
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
-    // Hide hamburger menu container
-    const hamburgerContainer = document.getElementById('portal-hamburger-container');
-    if (hamburgerContainer) hamburgerContainer.style.display = 'none';
+    // Hide dashboard trigger button
+    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
+    if (dashboardTrigger) dashboardTrigger.style.display = 'none';
     
     // Hide logout container
     const logoutContainer = document.getElementById('vault-logout-container');
@@ -802,9 +802,9 @@ function activateClientPortalTheme(client) {
     const trigger = document.getElementById('btn-portal-login-trigger');
     if (trigger) trigger.style.display = 'none';
     
-    // 3. Show hamburger menu container
-    const hamburgerContainer = document.getElementById('portal-hamburger-container');
-    if (hamburgerContainer) hamburgerContainer.style.display = 'block';
+    // 3. Show dashboard trigger button
+    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
+    if (dashboardTrigger) dashboardTrigger.style.display = 'inline-flex';
 
     // 4. Show logout container in the sidebar
     const logoutContainer = document.getElementById('vault-logout-container');

@@ -1912,22 +1912,7 @@ footer p {
    ========================================================================== */
 
 .minimal-chat-layout .staging-vault-panel {
-    display: flex !important;
-    position: fixed;
-    top: 80px; /* Stop at bottom of 80px header */
-    bottom: 50px; /* Stop at top of 50px footer */
-    left: -320px; /* Hidden offscreen on the left */
-    width: 320px;
-    height: calc(100vh - 130px); /* Fill the exact viewport between header and footer */
-    background: rgba(255, 255, 255, 0.98);
-    border-right: 1px solid var(--border-color);
-    border-radius: 0 16px 16px 0; /* Premium flush-drawer edge rounding */
-    box-shadow: 15px 0 35px rgba(0, 0, 0, 0.05);
-    z-index: 1000;
-    flex-direction: column;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    display: none !important; /* Completely hidden in guest mode */
 }
 
 .minimal-chat-layout .staging-vault-panel.open {
@@ -2456,4 +2441,94 @@ body.inverted-client-portal .hamburger-action-btn:hover {
     border-color: #ef4444;
     color: #ffffff;
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+/* ==========================================================================
+   ELITE CHATGPT-STYLE PERMANENTLY DOCKED SIDEBAR LAYOUT
+   ========================================================================== */
+
+/* 1. Desktop Mode (min-width: 769px) - Docked Permanent Sidebar */
+@media (min-width: 769px) {
+    /* Main container spans full width to accommodate the sidebar side-by-side */
+    body.inverted-client-portal.minimal-chat-layout .chat-console-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+    }
+
+    /* Sidebar docks permanently on the left side of the main container */
+    body.inverted-client-portal.minimal-chat-layout .staging-vault-panel {
+        display: flex !important;
+        position: relative !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 320px !important;
+        height: 100% !important;
+        background: rgba(30, 27, 75, 0.96) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-left: none !important;
+        border-radius: 0 !important; /* Docked flush, no rounded corners */
+        box-shadow: none !important; /* Flat structural element */
+        margin: 0 !important;
+        z-index: 10 !important;
+    }
+
+    /* Main chat pane expands to take up remaining width, beautifully centered */
+    body.inverted-client-portal.minimal-chat-layout .minimal-chat-core {
+        flex: 1 !important;
+        max-width: 680px !important;
+        margin: 0 auto !important;
+        height: 100% !important;
+    }
+
+    /* Hide the close button altogether since the panel is permanent structural layout */
+    body.inverted-client-portal.minimal-chat-layout .btn-close-vault {
+        display: none !important;
+    }
+
+    /* Hide the floating actions dashboard trigger button on desktop */
+    #btn-portal-dashboard-trigger {
+        display: none !important;
+    }
+}
+
+/* 2. Mobile Mode (max-width: 768px) - Clean Slide-Out Overlay Drawer */
+@media (max-width: 768px) {
+    /* Show dashboard trigger button in the top actions bar when logged in on mobile */
+    body.inverted-client-portal #btn-portal-dashboard-trigger {
+        display: inline-flex !important;
+    }
+
+    /* Sidebar acts as overlay sliding in from the left edge */
+    body.inverted-client-portal.minimal-chat-layout .staging-vault-panel {
+        display: flex !important;
+        position: fixed !important;
+        top: 80px !important; /* Stop at bottom of header */
+        bottom: 50px !important; /* Stop at top of footer */
+        left: -100% !important; /* Hidden left offscreen by default */
+        width: 100% !important;
+        height: calc(100vh - 130px) !important;
+        background: rgba(30, 27, 75, 0.98) !important;
+        border-right: none !important;
+        border-radius: 0 !important;
+        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.3) !important;
+        z-index: 1000 !important;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    /* Slide in cleanly when the open class is toggled */
+    body.inverted-client-portal.minimal-chat-layout .staging-vault-panel.open {
+        left: 0 !important;
+    }
+
+    /* Keep close button visible in the mobile slide-out drawer */
+    body.inverted-client-portal.minimal-chat-layout .btn-close-vault {
+        display: block !important;
+    }
 }
