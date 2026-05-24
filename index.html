@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Cornerstone Insurance Firm - Request for Quote</title>
     <meta name="description"
         content="Cornerstone Insurance Firm — tailored insurance coverage. Ask our AI agent a question or start a new policy today.">
@@ -20,7 +20,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Cornerstone Insurance Firm">
 
-    <link rel="stylesheet" href="style.css?v=3.2.0">
+    <link rel="stylesheet" href="style.css?v=3.3.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -48,7 +48,7 @@
     <header class="minimal-header">
         <div class="header-container">
             <div class="logo">
-                <a href="#" class="logo-cube-link" onclick="openLoginOverlay(); return false;" title="Client Portal Login">
+                <a href="#" class="logo-cube-link" onclick="document.body.classList.contains('inverted-client-portal') ? showPortalNotification('✅ Client Portal active. You are securely logged in.') : openLoginOverlay(); return false;" title="Client Portal Login">
                     <i class="fa-solid fa-cube purple-glow"></i>
                 </a>
                 <h1>CORNERSTONE</h1>

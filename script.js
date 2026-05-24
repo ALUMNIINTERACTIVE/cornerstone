@@ -665,6 +665,10 @@ function logoutClientPortal() {
     loggedInClient = null;
     chatStep = STEP.WELCOME;
     
+    // Restore welcome title for guest/public context
+    const welcomeTitle = document.querySelector('.chat-welcome-title');
+    if (welcomeTitle) welcomeTitle.textContent = 'Request for quote.';
+
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
@@ -809,6 +813,10 @@ function activateClientPortalTheme(client) {
     // 1. Invert body color theme instantly
     document.body.classList.add('inverted-client-portal');
     
+    // Update the welcome title to reflect client portal context
+    const welcomeTitle = document.querySelector('.chat-welcome-title');
+    if (welcomeTitle) welcomeTitle.textContent = 'How can I help you?';
+
     // Show logout trigger button in top navigation actions
     const logoutTrigger = document.getElementById('btn-portal-logout-trigger');
     if (logoutTrigger) logoutTrigger.style.display = 'inline-flex';
