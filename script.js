@@ -671,6 +671,7 @@ function logoutClientPortal() {
 
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
+    updateMetaThemeColor('#ffffff');
     
     // Hide theme switch container on logout
     const themeSwitch = document.getElementById('theme-switch-container');
@@ -810,8 +811,9 @@ async function submitPortalUpdateMessage(msg) {
 function activateClientPortalTheme(client) {
     chatStep = STEP.PHASE2;
     
-    // 1. Invert body color theme instantly
-    document.body.classList.add('inverted-client-portal');
+    // We want the client portal layout to match the main by default (light mode)
+    document.body.classList.remove('inverted-client-portal');
+    updateMetaThemeColor('#ffffff');
     
     // Update the welcome title to reflect client portal context
     const welcomeTitle = document.querySelector('.chat-welcome-title');
@@ -829,11 +831,11 @@ function activateClientPortalTheme(client) {
     const sidebarLogin = document.getElementById('vault-sidebar-login-container');
     if (sidebarLogin) sidebarLogin.style.display = 'none';
     
-    // Show client theme switch container and ensure it is checked
+    // Show client theme switch container and ensure it is unchecked by default to match main
     const themeSwitch = document.getElementById('theme-switch-container');
     if (themeSwitch) themeSwitch.style.display = 'flex';
     const themeCheckbox = document.getElementById('theme-toggle-checkbox');
-    if (themeCheckbox) themeCheckbox.checked = true;
+    if (themeCheckbox) themeCheckbox.checked = false;
     
     // Sync vaultState
     vaultState.email = client.email;
@@ -1132,14 +1134,21 @@ function showPortalNotification(message, color = 'var(--text-purple)') {
 }
 
 // ─── PREMIUM INTUITIVE SIDEBAR NAVIGATION & ACCOUNT THEME TOGGLE ───────────────
+function updateMetaThemeColor(color) {
+    const meta = document.getElementById('meta-theme-color');
+    if (meta) {
+        meta.setAttribute('content', color);
+    }
+}
+
 function toggleClientPortalTheme() {
     const checkbox = document.getElementById('theme-toggle-checkbox');
     if (checkbox.checked) {
         document.body.classList.add('inverted-client-portal');
-        showPortalNotification('✨ Obsidian dark imperial theme activated.');
+        updateMetaThemeColor('#3b0764');
     } else {
         document.body.classList.remove('inverted-client-portal');
-        showPortalNotification('☀️ Classic luxury white theme activated.');
+        updateMetaThemeColor('#ffffff');
     }
 }
 
