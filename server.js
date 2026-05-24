@@ -896,7 +896,7 @@ function generateSmartMockResponse(text, vaultState) {
 
     let checklistReminder = "";
     if (missingDocs.length > 0) {
-        checklistReminder = `\n\nTo finalize your commercial trucking insurance quote, I politely remind you that we still need to stage the following details:\n` + 
+        checklistReminder = `\n\nI politely remind you that you'll still need to upload the following details:\n` + 
             missingDocs.map((doc, idx) => `${idx + 1}. ${doc}`).join('\n') + 
             `\n\nYou can enter your Business Name or EIN directly here, or click the '+' icon in the chat row to upload your Driver's License or VIN photos!`;
     } else {
@@ -906,7 +906,7 @@ function generateSmartMockResponse(text, vaultState) {
     // 1. Staging status inquiries
     if (lower.includes('need next') || lower.includes('what do i need') || lower.includes('what is needed') || lower.includes('status') || lower.includes('missing') || lower.includes('checklist') || lower.includes('outstanding')) {
         if (missingDocs.length > 0) {
-            return `Hello${clientName}! To finalize your commercial trucking insurance quote, please provide the remaining details:
+            return `Hello${clientName}! I politely remind you that you'll still need to upload the following details:
 
 ` + missingDocs.map((doc, idx) => `${idx + 1}. ${doc}`).join('\n') + `
 
