@@ -2670,6 +2670,18 @@ body.inverted-client-portal .hamburger-action-btn:hover {
         width: 100% !important;
     }
 
+    /* Offset main content when sidebar is open */
+    .staging-vault-panel.open ~ main {
+        width: calc(100% - 320px);
+        margin-left: 320px;
+    }
+
+    /* Ensure main content is properly centered when sidebar is closed */
+    body.sidebar-closed main {
+        width: 100%;
+        margin-left: 0;
+    }
+
     /* Hide standard close button since we have the top-right toggle button */
     .minimal-chat-layout .btn-close-vault {
         display: none !important;
