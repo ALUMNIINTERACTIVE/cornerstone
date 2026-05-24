@@ -182,6 +182,15 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
             "What decentralized asset custody frameworks do you wish to integrate?",
             "Do you require dual-jurisdiction legal compliance coverage?"
         ];
+    } else if (detailsLower.includes('truck') || detailsLower.includes('cargo') || detailsLower.includes('transport') || (submission.service || '').toLowerCase().includes('truck') || (submission.service || '').toLowerCase().includes('auto')) {
+        defaultVerdict.inquirySummary = `Commercial trucking profile audit initialized for ${submission.name}. Standard risk and telemetry parameters active.`;
+        defaultVerdict.riskProfile = "Medium";
+        defaultVerdict.recommendedCoverageLimits = "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate";
+        defaultVerdict.followUpQuestions = [
+            "Please confirm the CDL experience length of the primary drivers.",
+            "Are hazardous materials (hazmat) transported, requiring a $5,000,000 FMCSA filing limit?",
+            "What is the radius of operation (under or over 500 miles)?"
+        ];
     }
 
     // System prompt for structured JSON extraction
@@ -189,6 +198,9 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
     You are an expert insurance risk analyst and document examiner at Cornerstone Insurance Firm.
     Analyze this user's submission details and any attached document/image.
     You must extract and verify details, rate the risk profile (Low, Medium, High), suggest coverage adjustments, and output a JSON object.
+    
+    If the submission or service is related to commercial trucking, commercial auto, or transport, ensure that the recommendedCoverageLimits is exactly matching this factual scope:
+    "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate"
     
     User details:
     - Name: ${submission.name}
@@ -205,7 +217,7 @@ async function analyzeWithLocalAI(submission, imagePath = null) {
       "verified": true/false (based on document validity or detail clarity),
       "inquirySummary": "A concise 2-sentence summary of the request.",
       "riskProfile": "Low" / "Medium" / "High",
-      "recommendedCoverageLimits": "Specific limit recommendation, e.g. $1,000,000 General Liability",
+      "recommendedCoverageLimits": "Specific limit recommendation, e.g. Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate",
       "followUpQuestions": ["tailored question 1", "tailored question 2"]
     }
     `;
@@ -441,7 +453,7 @@ app.post('/api/clients/register', (req, res) => {
             verified: true,
             inquirySummary: `New client request registered for commercial trucking policy starting ${effectiveDate}.`,
             riskProfile: "Low",
-            recommendedCoverageLimits: "Awaiting final documents (Driver's License, VIN, EIN, Business Name)...",
+            recommendedCoverageLimits: "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate",
             followUpQuestions: [
                 "Please upload a photo of the owner's driver's license.",
                 "Please upload a photo of the VIN #.",
@@ -541,7 +553,7 @@ app.post('/api/clients/update-telemetry', upload.fields([
         client.status = "Complete";
         client.aiVerdict.inquirySummary = `Commercial trucking insurance quote completed for ${client.businessName} (EIN: ${client.ein}) starting ${client.effectiveDate}.`;
         client.aiVerdict.riskProfile = "Medium";
-        client.aiVerdict.recommendedCoverageLimits = "Commercial Auto / Trucking Liability ($1,000,000)";
+        client.aiVerdict.recommendedCoverageLimits = "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate";
         client.aiVerdict.followUpQuestions = [];
     }
 
@@ -602,7 +614,7 @@ app.post('/api/clients/submit-update', (req, res) => {
             verified: true,
             inquirySummary: `Incoming client portal update notification: "${message}"`,
             riskProfile: "Low",
-            recommendedCoverageLimits: "N/A",
+            recommendedCoverageLimits: "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate",
             followUpQuestions: []
         }
     };
@@ -681,6 +693,9 @@ app.post('/api/submissions/send-reply', async (req, res) => {
         } else {
             console.warn(`[EMAIL] Mail transporter offline. Logging drafted email content:\nTo: ${submission.email}\nContent: ${replyText}`);
         }
+
+        submission.responded = true;
+        saveDatabase(db);
         
         res.json({ success: true });
     } catch(e) {

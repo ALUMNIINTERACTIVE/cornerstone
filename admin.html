@@ -719,6 +719,12 @@
             border: 1px solid rgba(236, 72, 153, 0.2);
         }
 
+        .verdict-status.responded {
+            color: var(--accent-purple-light);
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
         .verdict-row {
             display: flex;
             flex-direction: column;
@@ -1550,9 +1556,14 @@
                     verified: true,
                     inquirySummary: "Static ingestion verification completed. Local LLM evaluation pending.",
                     riskProfile: "Low",
-                    recommendedCoverageLimits: "N/A",
+                    recommendedCoverageLimits: "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate",
                     followUpQuestions: ["Could you provide standard identification documents?"]
                 };
+                
+                let recommendedLimits = verdict.recommendedCoverageLimits || "N/A";
+                if (recommendedLimits === "N/A" || recommendedLimits.startsWith("Awaiting final") || recommendedLimits.startsWith("Awaiting documents") || recommendedLimits === "Standard General Liability ($1,000,000)") {
+                    recommendedLimits = "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate";
+                }
                 
                 const isVerified = verdict.verified !== false;
                 const riskProfile = verdict.riskProfile || 'Low';
@@ -1562,7 +1573,11 @@
                 let statusText = 'Verified';
                 let statusIcon = 'fa-circle-check';
 
-                if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
+                if (submission.responded) {
+                    statusType = 'responded';
+                    statusText = 'Responded';
+                    statusIcon = 'fa-paper-plane';
+                } else if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
                     // Check if all 4 telemetry fields are complete
                     const isComplete = submission.businessName && submission.ein && submission.driversLicense && submission.vin;
                     if (!isComplete) {
@@ -1792,7 +1807,7 @@
                                 <div class="verdict-row">
                                     <div class="verdict-label">Suggested Limit Scope</div>
                                     <div class="verdict-value" style="color: var(--text-purple); font-weight: bold; margin-top: 4px;">
-                                        ${escapeHtml(verdict.recommendedCoverageLimits || 'N/A')}
+                                        ${escapeHtml(recommendedLimits)}
                                     </div>
                                 </div>
                             </div>
@@ -1890,6 +1905,10 @@
                     const textEl = document.getElementById(`reply-text-${id}`);
                     if (textEl && !textEl.value) {
                         const verdict = sub.aiVerdict || {};
+                        let recommendedLimits = verdict.recommendedCoverageLimits || "N/A";
+                        if (recommendedLimits === "N/A" || recommendedLimits.startsWith("Awaiting final") || recommendedLimits.startsWith("Awaiting documents") || recommendedLimits === "Standard General Liability ($1,000,000)") {
+                            recommendedLimits = "Primary Auto Liability: $1,000,000 (FMCSA Min $750k, Shippers require $1M) | Motor Truck Cargo: $100,000 | General Liability: $1,000,000 / $2,000,000 aggregate";
+                        }
                         const followUps = verdict.followUpQuestions || [];
                         const summary = verdict.inquirySummary || "your recent secure submission";
                         
@@ -1902,7 +1921,7 @@
                         // Generate classical luxury response outline
                         textEl.value = `Dear ${sub.name},\n\n` +
                             `Thank you for contacting Cornerstone Insurance Firm. We have received and securely audited your request regarding ${summary.toLowerCase().replace(/\.$/, '')}.\n\n` +
-                            `A senior risk analyst has reviewed your dossier. Based on our preliminary local risk parameters, we can structure coverage recommendations up to ${verdict.recommendedCoverageLimits || 'standard parameters'}.` +
+                            `A senior risk analyst has reviewed your dossier. Based on our preliminary local risk parameters, we can structure coverage recommendations up to ${recommendedLimits}.` +
                             questionsListStr + `\n\n` +
                             `We stand ready to establish a permanent foundation of safety for your assets. One of our underwriters will contact you via email (${sub.email}) to finalize your bespoke insurance policy.\n\n` +
                             `Sincerely,\n` +
@@ -1935,7 +1954,11 @@
                 });
                 
                 if (response.ok) {
-                    showNotification("✉️ Secure Transmission Successful. Draft dispatched to client.");
+                    // Update local submission responded state
+                    const localSub = submissionsList.find(s => s.id === id);
+                    if (localSub) {
+                        localSub.responded = true;
+                    }
                     
                     // Hide composer and clear state
                     if (composerEl) composerEl.style.display = 'none';
@@ -1944,6 +1967,8 @@
                     // Auto acknowledge since responded
                     if (!acknowledgedIds.has(id)) {
                         toggleAcknowledge(id);
+                    } else {
+                        renderSubmissions();
                     }
                 } else {
                     const data = await response.json();
