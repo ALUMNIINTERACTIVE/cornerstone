@@ -699,6 +699,12 @@
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
+        .verdict-status.pending {
+            color: var(--color-medium);
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
         .verdict-status.unverified {
             color: var(--color-high);
             background: rgba(236, 72, 153, 0.1);
@@ -1520,7 +1526,7 @@
                 if (submission.type === 'policy_change') {
                     typeBadgeClass = 'type-badge policy';
                     typeText = 'Policy Alteration';
-                } else if (submission.type === 'new_client_request') {
+                } else if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
                     typeBadgeClass = 'type-badge';
                     typeText = 'New Client Request';
                 } else if (submission.type === 'portal_update') {
@@ -1541,9 +1547,33 @@
                 const riskProfile = verdict.riskProfile || 'Low';
                 const riskClass = riskProfile.toLowerCase();
                 
+                let statusType = 'verified'; 
+                let statusText = 'Verified';
+                let statusIcon = 'fa-circle-check';
+
+                if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
+                    // Check if all 4 telemetry fields are complete
+                    const isComplete = submission.businessName && submission.ein && submission.driversLicense && submission.vin;
+                    if (!isComplete) {
+                        statusType = 'pending';
+                        statusText = 'Pending';
+                        statusIcon = 'fa-triangle-exclamation';
+                    } else if (verdict.verified === false) {
+                        statusType = 'unverified';
+                        statusText = 'Flagged';
+                        statusIcon = 'fa-triangle-exclamation';
+                    }
+                } else {
+                    if (verdict.verified === false) {
+                        statusType = 'unverified';
+                        statusText = 'Flagged';
+                        statusIcon = 'fa-triangle-exclamation';
+                    }
+                }
+                
                 // Document node mapping
                 let documentHtml = '';
-                if (submission.type === 'new_client_request') {
+                if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
                     if (submission.driversLicense) {
                         const dlFilename = submission.driversLicense.split('/').pop();
                         documentHtml += `
@@ -1555,6 +1585,15 @@
                                 <a href="${submission.driversLicense}" class="btn-download" download title="Download Document">
                                     <i class="fa-solid fa-cloud-arrow-down"></i>
                                 </a>
+                            </div>
+                        `;
+                    } else {
+                        documentHtml += `
+                            <div class="document-block awaiting-doc" style="margin-top: 10px; opacity: 0.7;">
+                                <div class="doc-info">
+                                    <i class="fa-solid fa-address-card" style="color: var(--color-medium); font-size: 1.4rem;"></i>
+                                    <span class="doc-name" style="color: var(--color-medium); font-style: italic;">Owner's Driver's License: Awaiting upload...</span>
+                                </div>
                             </div>
                         `;
                     }
@@ -1569,6 +1608,15 @@
                                 <a href="${submission.vin}" class="btn-download" download title="Download Document">
                                     <i class="fa-solid fa-cloud-arrow-down"></i>
                                 </a>
+                            </div>
+                        `;
+                    } else {
+                        documentHtml += `
+                            <div class="document-block awaiting-doc" style="margin-top: 8px; opacity: 0.7;">
+                                <div class="doc-info">
+                                    <i class="fa-solid fa-car-rear" style="color: var(--color-medium); font-size: 1.4rem;"></i>
+                                    <span class="doc-name" style="color: var(--color-medium); font-style: italic;">Vehicle VIN # Photo: Awaiting upload...</span>
+                                </div>
                             </div>
                         `;
                     }
@@ -1591,7 +1639,7 @@
 
                 // Render dynamic Activity updates logs for new client profiles
                 let activityHtml = '';
-                if (submission.type === 'new_client_request' && submission.updates && submission.updates.length > 0) {
+                if ((submission.type === 'new_client_request' || submission.type === 'new_policy') && submission.updates && submission.updates.length > 0) {
                     activityHtml = `
                         <div class="detail-item" style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 10px;">
                             <div class="detail-label">Client Portal Update Telemetry Logs</div>
@@ -1616,7 +1664,7 @@
 
                 // Custom Detailed Grid for Onboarding Clients vs General Consultations
                 let detailsGridHtml = '';
-                if (submission.type === 'new_client_request') {
+                if (submission.type === 'new_client_request' || submission.type === 'new_policy') {
                     detailsGridHtml = `
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 5px;">
                             <div class="detail-item">
@@ -1718,9 +1766,9 @@
                                     <i class="fa-solid fa-microchip-ai" style="color: var(--text-purple); font-size: 1.1rem; margin-right: 6px;"></i> 
                                     Local Risk Verdict
                                 </div>
-                                <div class="verdict-status ${isVerified ? 'verified' : 'unverified'}">
-                                    <i class="fa-solid ${isVerified ? 'fa-circle-check' : 'fa-triangle-exclamation'}"></i>
-                                    ${isVerified ? 'Verified' : 'Flagged'}
+                                <div class="verdict-status ${statusType}">
+                                    <i class="fa-solid ${statusIcon}"></i>
+                                    ${statusText}
                                 </div>
                             </div>
                             
