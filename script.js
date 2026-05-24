@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth <= 768) {
         const vault = document.getElementById('staging-vault-panel');
         if (vault) vault.classList.remove('open');
+        document.body.classList.add('sidebar-closed');
     }
 });
 
@@ -666,6 +667,10 @@ function logoutClientPortal() {
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
+    // Hide theme switch container on logout
+    const themeSwitch = document.getElementById('theme-switch-container');
+    if (themeSwitch) themeSwitch.style.display = 'none';
+    
     // Hide logout container
     const logoutContainer = document.getElementById('vault-logout-container');
     if (logoutContainer) logoutContainer.style.display = 'none';
@@ -823,6 +828,12 @@ function activateClientPortalTheme(client) {
     // Hide sidebar login container in the sidebar
     const sidebarLogin = document.getElementById('vault-sidebar-login-container');
     if (sidebarLogin) sidebarLogin.style.display = 'none';
+    
+    // Show client theme switch container and ensure it is checked
+    const themeSwitch = document.getElementById('theme-switch-container');
+    if (themeSwitch) themeSwitch.style.display = 'flex';
+    const themeCheckbox = document.getElementById('theme-toggle-checkbox');
+    if (themeCheckbox) themeCheckbox.checked = true;
     
     // 5. Update dashboard trigger button to client style
     const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
@@ -1124,4 +1135,61 @@ function showPortalNotification(message, color = 'var(--text-purple)') {
         alertEl.style.transform = 'translateY(15px)';
         setTimeout(() => alertEl.remove(), 600);
     }, 6000);
+}
+
+// ─── PREMIUM INTUITIVE SIDEBAR NAVIGATION & ACCOUNT THEME TOGGLE ───────────────
+function toggleClientPortalTheme() {
+    const checkbox = document.getElementById('theme-toggle-checkbox');
+    if (checkbox.checked) {
+        document.body.classList.add('inverted-client-portal');
+        showPortalNotification('✨ Obsidian dark imperial theme activated.');
+    } else {
+        document.body.classList.remove('inverted-client-portal');
+        showPortalNotification('☀️ Classic luxury white theme activated.');
+    }
+}
+
+function openProfileSettingsModal() {
+    if (!loggedInClient) return;
+    document.getElementById('profile-name-input').value = loggedInClient.name || '';
+    document.getElementById('profile-email-input').value = loggedInClient.email || '';
+    document.getElementById('profile-phone-input').value = loggedInClient.phone || '';
+    document.getElementById('profile-business-input').value = loggedInClient.businessName || '';
+    document.getElementById('profile-ein-input').value = loggedInClient.ein || '';
+    
+    document.getElementById('auth-overlay-container').classList.add('active');
+    document.getElementById('auth-card-verify').classList.remove('active');
+    document.getElementById('auth-card-password').classList.remove('active');
+    document.getElementById('auth-card-login').classList.remove('active');
+    document.getElementById('auth-card-profile').classList.add('active');
+}
+
+function closeProfileSettingsModal() {
+    document.getElementById('auth-overlay-container').classList.remove('active');
+    document.getElementById('auth-card-profile').classList.remove('active');
+}
+
+function saveProfileSettings(e) {
+    e.preventDefault();
+    if (!loggedInClient) return;
+    
+    loggedInClient.name = document.getElementById('profile-name-input').value.trim();
+    loggedInClient.phone = document.getElementById('profile-phone-input').value.trim();
+    loggedInClient.businessName = document.getElementById('profile-business-input').value.trim();
+    loggedInClient.ein = document.getElementById('profile-ein-input').value.trim();
+    
+    // Sync vaultState
+    vaultState.fullName = loggedInClient.name;
+    vaultState.phone = loggedInClient.phone;
+    vaultState.businessName = loggedInClient.businessName;
+    vaultState.ein = loggedInClient.ein;
+    
+    // Save to local storage
+    saveToStorage();
+    
+    // Update sidebar UI
+    updateStagingVaultUI();
+    
+    closeProfileSettingsModal();
+    showPortalNotification('✔️ Profile settings updated securely.');
 }

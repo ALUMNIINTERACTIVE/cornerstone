@@ -2564,3 +2564,232 @@ body.inverted-client-portal .hamburger-action-btn:hover {
         display: none !important;
     }
 }
+
+/* ==========================================================================
+   PREMIUM CHATGPT-STYLE SIDEBAR TOGGLE & ACCOUNT NAV & THEME SWITCH
+   ========================================================================== */
+
+/* 1. Sidebar Toggle Buttons (ChatGPT Style) */
+.btn-sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+    z-index: 1005;
+}
+
+.btn-sidebar-toggle svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.btn-sidebar-toggle:hover {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--accent-purple);
+}
+
+body.inverted-client-portal .btn-sidebar-toggle {
+    color: #ffffff;
+}
+
+body.inverted-client-portal .btn-sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* Closed toggle sits in the header on the left */
+.btn-sidebar-toggle-closed {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none !important; /* Managed by .sidebar-closed class */
+}
+
+/* Open toggle sits inside the sidebar header on the right */
+.btn-sidebar-toggle-open {
+    color: var(--text-secondary) !important;
+}
+
+.btn-sidebar-toggle-open:hover {
+    color: #ef4444 !important;
+}
+
+/* Show closed toggle in header ONLY when sidebar is closed */
+body.sidebar-closed .btn-sidebar-toggle-closed {
+    display: flex !important;
+}
+
+/* On desktop, hide the standard close button & make sidebar open/close fluid */
+@media (min-width: 769px) {
+    .staging-vault-panel {
+        transition: width 0.3s ease, margin 0.3s ease !important;
+    }
+}
+
+/* 2. Sidebar Navigation Menu Styles */
+.sidebar-nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 1.5rem 1.8rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.inverted-client-portal .sidebar-nav-menu {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    font-family: var(--font-luxury);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.sidebar-nav-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--accent-purple-light);
+}
+
+body.inverted-client-portal .sidebar-nav-item i {
+    color: #d8b4fe;
+}
+
+.sidebar-nav-item span {
+    letter-spacing: 0.02em;
+}
+
+.sidebar-nav-item:hover {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--accent-purple-light);
+}
+
+body.inverted-client-portal .sidebar-nav-item {
+    color: #cbd5e1;
+}
+
+body.inverted-client-portal .sidebar-nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.sidebar-nav-item.logout-item:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: #f87171 !important;
+}
+
+.sidebar-nav-item.logout-item i {
+    color: #f87171 !important;
+}
+
+/* Visibility toggles based on client login state */
+.client-only {
+    display: none !important;
+}
+
+body.inverted-client-portal .client-only {
+    display: flex !important;
+}
+
+body.inverted-client-portal .guest-only {
+    display: none !important;
+}
+
+/* 3. Account Theme Toggle Switch */
+.theme-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-family: var(--font-luxury);
+    font-size: 0.8rem;
+    color: var(--text-main);
+    transition: var(--transition-smooth);
+}
+
+body.inverted-client-portal .theme-switch-container {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.theme-switch-label {
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+/* Switch styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(124, 58, 237, 0.2);
+    transition: .4s;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--accent-purple);
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-purple-light);
+    border-color: var(--accent-purple-light);
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+    background-color: #ffffff;
+}
+
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
