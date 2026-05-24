@@ -97,13 +97,15 @@ function restoreOptionButtons() {
     });
 }
 
-// Close left sidebar when clicking outside on the main console area
+// Close left sidebar when clicking outside on the main console area (mobile only)
 document.addEventListener('click', (e) => {
-    const vault = document.getElementById('staging-vault-panel');
-    const hamburger = document.getElementById('portal-hamburger-container');
-    if (vault && vault.classList.contains('open')) {
-        if (!vault.contains(e.target) && (!hamburger || !hamburger.contains(e.target))) {
-            vault.classList.remove('open');
+    if (window.innerWidth <= 768) {
+        const vault = document.getElementById('staging-vault-panel');
+        const trigger = document.getElementById('btn-portal-dashboard-trigger');
+        if (vault && vault.classList.contains('open')) {
+            if (!vault.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+                vault.classList.remove('open');
+            }
         }
     }
 });
@@ -129,6 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadFromStorage();
     updateStagingVaultUI();
+
+    // On mobile, close the sidebar by default
+    if (window.innerWidth <= 768) {
+        const vault = document.getElementById('staging-vault-panel');
+        if (vault) vault.classList.remove('open');
+    }
 });
 
 // ─── WELCOME RENDER ───────────────────────────────────────────────────────────
@@ -658,10 +666,6 @@ function logoutClientPortal() {
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
-    // Hide dashboard trigger button
-    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
-    if (dashboardTrigger) dashboardTrigger.style.display = 'none';
-    
     // Hide logout container
     const logoutContainer = document.getElementById('vault-logout-container');
     if (logoutContainer) logoutContainer.style.display = 'none';
@@ -672,6 +676,12 @@ function logoutClientPortal() {
     
     // Show login trigger button
     document.getElementById('btn-portal-login-trigger').style.display = 'inline-flex';
+    
+    // Reset dashboard trigger button to guest style
+    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
+    if (dashboardTrigger) {
+        dashboardTrigger.innerHTML = '<i class="fa-solid fa-folder-open"></i> <span class="btn-text">Secure Vault</span>';
+    }
     
     // Reset inputs
     resetConversation();
@@ -801,14 +811,16 @@ function activateClientPortalTheme(client) {
     // 2. Hide login trigger button
     const trigger = document.getElementById('btn-portal-login-trigger');
     if (trigger) trigger.style.display = 'none';
-    
-    // 3. Show dashboard trigger button
-    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
-    if (dashboardTrigger) dashboardTrigger.style.display = 'inline-flex';
 
     // 4. Show logout container in the sidebar
     const logoutContainer = document.getElementById('vault-logout-container');
     if (logoutContainer) logoutContainer.style.display = 'block';
+    
+    // 5. Update dashboard trigger button to client style
+    const dashboardTrigger = document.getElementById('btn-portal-dashboard-trigger');
+    if (dashboardTrigger) {
+        dashboardTrigger.innerHTML = '<i class="fa-solid fa-chart-pie"></i> <span class="btn-text">Dashboard</span>';
+    }
     
     // Sync vaultState
     vaultState.email = client.email;
