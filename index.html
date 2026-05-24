@@ -38,6 +38,23 @@
     <!-- Compact Elegant Brand Header -->
     <header class="minimal-header">
         <div class="header-container">
+            <!-- Hamburger menu (top-left) -->
+            <div id="portal-hamburger-container" class="portal-hamburger-container" style="display: none;">
+                <button type="button" class="btn-hamburger" id="btn-hamburger" onclick="toggleHamburgerMenu(event)" title="Profile Options">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="hamburger-dropdown-content" id="hamburger-dropdown">
+                    <div class="hamburger-profile-info">
+                        <div class="hamburger-welcome-name" id="hamburger-welcome-name">Welcome, [Name]</div>
+                        <div id="hamburger-business-subtitle" class="hamburger-business-subtitle" style="display: none;"></div>
+                    </div>
+                    <hr class="hamburger-divider">
+                    <button type="button" class="hamburger-action-btn" onclick="logoutClientPortal()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
             <div class="logo">
                 <i class="fa-solid fa-cube purple-glow"></i>
                 <h1>CORNERSTONE</h1>
@@ -50,16 +67,6 @@
             
             <!-- Immersive Central Content Wrapper -->
             <div class="minimal-chat-core">
-                <!-- Personal Client Profile Banner Header -->
-                <div id="client-profile-header" class="client-profile-header" style="display: none;">
-                    <div class="client-identity-box">
-                        <div class="client-welcome-name" id="client-welcome-name">Welcome, [Name]</div>
-                        <div class="client-business-subtitle" id="client-business-subtitle"></div>
-                    </div>
-                    <button type="button" class="btn-client-logout" onclick="logoutClientPortal()">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
-                    </button>
-                </div>
 
                 <!-- Welcome Title (fades/hides when chat starts) -->
                 <h2 class="chat-welcome-title">Request for quote.</h2>

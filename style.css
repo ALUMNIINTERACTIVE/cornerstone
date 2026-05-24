@@ -898,10 +898,10 @@ footer p {
 
 .chat-message {
     max-width: 80%;
-    padding: 0.8rem 1.2rem;
-    border-radius: var(--border-radius);
+    padding: 0.9rem 1.4rem;
+    border-radius: 20px; /* Highly rounded premium chat bubbles */
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     position: relative;
     animation: chatMsgFade 0.3s ease-out;
 }
@@ -916,6 +916,7 @@ footer p {
     align-self: flex-start;
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    border-bottom-left-radius: 4px; /* Organic conversation edge */
 }
 
 .chat-message.user {
@@ -923,6 +924,7 @@ footer p {
     color: white;
     align-self: flex-end;
     box-shadow: 0 4px 10px rgba(124, 58, 237, 0.25);
+    border-bottom-right-radius: 4px; /* Organic conversation edge */
 }
 
 /* Chat Inputs */
@@ -1412,7 +1414,7 @@ footer p {
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
+    border-radius: 24px; /* Highly rounded luxury buttons */
     font-family: var(--font-luxury);
     font-size: 0.85rem;
     letter-spacing: 0.15em;
@@ -2034,13 +2036,13 @@ body.inverted-client-portal .btn-send:hover {
     transform: scale(1.05);
 }
 
-body.inverted-client-portal .chat-message.assistant p {
+body.inverted-client-portal .chat-message.assistant {
     background: rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-body.inverted-client-portal .chat-message.user p {
+body.inverted-client-portal .chat-message.user {
     background: #ffffff !important;
     color: #3b0764 !important;
     border: 1px solid #ffffff !important;
@@ -2207,61 +2209,144 @@ body.inverted-client-portal footer p a {
 }
 
 /* ==========================================================================
-   PERSONAL PROFILE HEADER & PORTAL CONTROLS
+   PERSONAL PROFILE HEADER & PORTAL CONTROLS (HAMBURGER MENU)
    ========================================================================== */
-.client-profile-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 1rem 1.8rem;
-    border-radius: var(--border-radius);
-    margin-bottom: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    animation: authSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.portal-hamburger-container {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1005;
 }
 
-.client-identity-box {
+.btn-hamburger {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition-smooth);
+}
+
+.btn-hamburger:hover {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--accent-purple);
+}
+
+body.inverted-client-portal .btn-hamburger {
+    color: #ffffff;
+}
+
+body.inverted-client-portal .btn-hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hamburger Dropdown Content */
+.hamburger-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-premium-hover);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    width: 280px;
+    z-index: 1006;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    animation: authSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    text-align: left;
+}
+
+.hamburger-dropdown-content.active {
+    display: block;
+}
+
+body.inverted-client-portal .hamburger-dropdown-content {
+    background: rgba(30, 27, 75, 0.96);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(167, 139, 250, 0.2);
+}
+
+.hamburger-profile-info {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    margin-bottom: 1rem;
 }
 
-.client-welcome-name {
-    font-size: 1.4rem;
+.hamburger-welcome-name {
+    font-size: 1.2rem;
     font-weight: 500;
-    color: #ffffff;
-    letter-spacing: 0.02em;
+    color: var(--text-main);
     font-family: var(--font-luxury);
 }
 
-.client-business-subtitle {
-    font-size: 0.85rem;
-    color: #d8b4fe;
-    letter-spacing: 0.12em;
+body.inverted-client-portal .hamburger-welcome-name {
+    color: #ffffff;
+}
+
+.hamburger-business-subtitle {
+    font-size: 0.75rem;
+    color: var(--accent-purple-dark);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     font-weight: 600;
 }
 
-.btn-client-logout {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    padding: 0.5rem 1.2rem;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+body.inverted-client-portal .hamburger-business-subtitle {
+    color: #d8b4fe;
+}
+
+.hamburger-divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 1rem 0;
+}
+
+body.inverted-client-portal .hamburger-divider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-action-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    text-align: left;
     cursor: pointer;
-    transition: var(--transition-smooth);
     border-radius: var(--border-radius);
+    transition: var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-family: var(--font-luxury);
 }
 
-.btn-client-logout:hover {
+.hamburger-action-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+body.inverted-client-portal .hamburger-action-btn {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+body.inverted-client-portal .hamburger-action-btn:hover {
     background: #ef4444;
     border-color: #ef4444;
     color: #ffffff;

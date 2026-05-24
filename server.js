@@ -813,7 +813,7 @@ app.post('/api/ai/chat', upload.single('document'), async (req, res) => {
 
     // Static fallback if local LLM is completely offline
     console.log(`[CHAT_AI] Offline fallback triggered.`);
-    let replyMessage = "Welcome to Cornerstone Insurance Firm. Our local GPU AI models are currently initializing offline. You can describe your request and attach documents right here in the chat terminal. The Secure Ingestion Vault on the right will compile your details; simply review and click 'Verify & Submit' to finalize your request.";
+    let replyMessage = "Welcome to Cornerstone Insurance Firm. You can describe your request and attach documents right here in the chat terminal. The Secure Ingestion Vault on the right will compile your details; simply review and click 'Verify & Submit' to finalize your request.";
     
     if (req.file) {
         replyMessage = `I have successfully received and securely staged your uploaded document: "${req.file.originalname}". I have locked this document into your Secure Ingestion Vault on the right. Please provide your Full Name and Email Address if you haven't done so, then click 'Verify & Submit Dossier' to transmit this request to our underwriters.`;

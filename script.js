@@ -97,6 +97,23 @@ function restoreOptionButtons() {
     });
 }
 
+// ─── HAMBURGER DROPDOWN CONTROLLER ───────────────────────────────────────────
+function toggleHamburgerMenu(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('hamburger-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
+}
+
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('hamburger-dropdown');
+    const container = document.getElementById('portal-hamburger-container');
+    if (dropdown && container && !container.contains(e.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+
 // ─── DOM READY ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('console-drop-zone');
@@ -189,7 +206,7 @@ function handleWelcomeChoice(action) {
     if (action === 'yes') {
         chatStep = STEP.GET_EMAIL;
         appendConsoleMessageUI('assistant', 
-            `Perfect! I will guide you through our secure intake process to formulate a tailored estimated quote.\n\nFirst, what is your **email address**?`
+            `Perfect! I will guide you through our secure intake process to formulate a tailored estimated quote.\n\nFirst, what is your email address?`
         );
     } else {
         appendConsoleMessageUI('assistant', 
@@ -218,7 +235,7 @@ async function sendConsoleChatMessage() {
     }
 
     // 2. If in Phase 1 (Guest Intake), handle step verification
-    if (chatStep !== STEP.WELCOME && chatStep !== STEP.COMPLETE) {
+    if (chatStep !== STEP.COMPLETE) {
         const guidedReply = await processIntakeStep(text);
         if (guidedReply !== null) {
             const loaderId = appendConsoleLoaderUI();
@@ -286,7 +303,7 @@ async function processIntakeStep(text) {
             const lower = text.toLowerCase();
             if (lower.includes('yes') || lower.includes('quote') || lower.includes('trucking') || lower.includes('insurance') || lower.includes('need')) {
                 chatStep = STEP.GET_EMAIL;
-                return `Excellent! I'm delighted to assist you with a tailored insurance quote.\n\nTo begin, what **email address** should we use to reach you?`;
+                return `Perfect! I will guide you through our secure intake process to formulate a tailored estimated quote.\n\nFirst, what is your email address?`;
             }
             return null; // pass through to general QA
         }
@@ -298,41 +315,41 @@ async function processIntakeStep(text) {
             }
             vaultState.email = email;
             chatStep = STEP.GET_DATE;
-            return `Got it! What is the desired **effective date** for your coverage? (Format: **mm/dd/yy**, e.g. 05/23/26)`;
+            return `Got it! What is the desired effective date for your coverage? (Format: mm/dd/yyyy)`;
         }
 
         case STEP.GET_DATE: {
             const dateInput = text.trim();
             if (!validateDateMDY(dateInput)) {
-                return `Please provide the effective date in **mm/dd/yy** format (e.g. 05/23/26).`;
+                return `Please provide the effective date in mm/dd/yyyy format.`;
             }
             vaultState.effectiveDate = dateInput;
             chatStep = STEP.GET_FULL_NAME;
-            return `Got it, starting ${vaultState.effectiveDate}! Next, what is your **full name** (first and last name together)?`;
+            return `Got it, starting ${vaultState.effectiveDate}! Next, what is your full name (first and last name together)?`;
         }
 
         case STEP.GET_FULL_NAME: {
             const nameInput = text.trim();
             const parts = nameInput.split(/\s+/);
             if (parts.length < 2) {
-                return `To process your quote, please enter your **first and last name together** (e.g. John Doe).`;
+                return `To process your quote, please enter your first and last name together.`;
             }
             vaultState.fullName = nameInput.split(' ').map(word => capitalize(word)).join(' ');
             chatStep = STEP.GET_PHONE;
-            return `Nice to meet you, ${vaultState.fullName}! Finally, what is your best **phone number**?`;
+            return `Nice to meet you, ${vaultState.fullName}! Finally, what is your best phone number?`;
         }
 
         case STEP.GET_PHONE: {
             const phone = extractPhone(text);
             if (!phone) {
-                return `Please enter a valid 10-digit phone number (e.g. 555-867-5309).`;
+                return `Please enter a valid 10-digit phone number.`;
             }
             vaultState.phone = phone;
             chatStep = STEP.VERIFICATION;
             
             // Trigger 6-digit code generation
             await triggerVerificationCodeRequest();
-            return `Perfect! I have compiled your intake details.\n\nFor your security, we need to verify your email address before continuing. A **6-digit verification code** has been sent to **${vaultState.email}**.\n\nPlease enter the verification code in the overlay modal on your screen.`;
+            return `Perfect! I have compiled your intake details.\n\nFor your security, we need to verify your email address before continuing. A 6-digit verification code has been sent to ${vaultState.email}.\n\nPlease enter the verification code in the overlay modal on your screen.`;
         }
 
         default:
@@ -366,7 +383,7 @@ async function processPhase2Dialogue(text) {
         }
         vaultState.ein = ein;
         await updateTelemetryOnServer();
-        appendConsoleMessageUI('assistant', `✅ Success: I have updated your Employer Identification Number (EIN) to: **${ein}**.`);
+        appendConsoleMessageUI('assistant', `✅ Success: I have updated your Employer Identification Number (EIN) to: ${ein}.`);
         checkPhase2Completion();
         return;
     }
@@ -376,7 +393,7 @@ async function processPhase2Dialogue(text) {
         let bName = text.replace(/my business is|business name is|company is/gi, '').trim();
         vaultState.businessName = bName;
         await updateTelemetryOnServer();
-        appendConsoleMessageUI('assistant', `✅ Success: I have set your Legal Business Name to: **${bName}**.`);
+        appendConsoleMessageUI('assistant', `✅ Success: I have set your Legal Business Name to: ${bName}.`);
         checkPhase2Completion();
         return;
     }
@@ -386,20 +403,20 @@ async function processPhase2Dialogue(text) {
     let count = 1;
     
     if (!vaultState.businessName) {
-        reply += `${count++}. **Legal Business Name** (e.g. type: "My business is Liberty Cargo LLC")\n`;
+        reply += `${count++}. Legal Business Name (type your business name)\n`;
     }
     if (!vaultState.ein) {
-        reply += `${count++}. **EIN** (e.g. type your 9-digit EIN: "12-3456789")\n`;
+        reply += `${count++}. EIN (type your 9-digit EIN)\n`;
     }
     if (!vaultState.driversLicense) {
-        reply += `${count++}. **Owner's Driver's License** photo (click the '+' icon below to upload)\n`;
+        reply += `${count++}. Owner's Driver's License photo (click the '+' icon below to upload)\n`;
     }
     if (!vaultState.vin) {
-        reply += `${count++}. **VIN # Photo** (click the '+' icon below to upload)\n`;
+        reply += `${count++}. VIN # Photo (click the '+' icon below to upload)\n`;
     }
 
     if (count === 1) {
-        reply = `All documents and details have been successfully uploaded, ${loggedInClient.name}!\n\n**An agent will be in touch with you shortly after uploading the remaining documents.**\n\nIf you need to make changes or request policy modifications (like adding drivers), simply type them here in the chat.`;
+        reply = `All documents and details have been successfully uploaded, ${loggedInClient.name}!\n\nAn agent will be in touch with you shortly after uploading the remaining documents.\n\nIf you need to make changes or request policy modifications (like adding drivers), simply type them here in the chat.`;
     } else {
         reply += `\nFeel free to ask me general questions about insurance, deductibles, or coverages at any time!`;
     }
@@ -530,7 +547,7 @@ async function submitPasswordSetup() {
             
             // Greet customer in chat
             appendConsoleMessageUI('assistant', 
-                `🎉 Verification complete! Welcome to your secure Cornerstone Client Portal, **${loggedInClient.name}**!\n\nYour session is active. I have toggled our inverted purple console. To finalize your commercial trucking insurance quote, please upload/provide:\n\n• A photo of the **owner's driver's license**\n• A photo of your **VIN #**\n• Your 9-digit **EIN**\n• Your **Legal Business Name**`
+                `🎉 Verification complete! Welcome to your secure Cornerstone Client Portal, ${loggedInClient.name}!\n\nYour session is active. I have toggled our inverted purple console. To finalize your commercial trucking insurance quote, please upload/provide:\n\n• A photo of the owner's driver's license\n• A photo of your VIN #\n• Your 9-digit EIN\n• Your Legal Business Name`
             );
             
             updateStagingVaultUI();
@@ -589,7 +606,7 @@ async function submitClientLogin() {
             
             // Greet in chat
             appendConsoleMessageUI('assistant', 
-                `🔑 Authorized! Welcome back, **${loggedInClient.name}**!\n\nYour personal client portal is active. If there are any outstanding telemetry documents needed (Driver's License, VIN Photo, EIN, Business Name), please upload them to finalize your quote estimate.`
+                `🔑 Authorized! Welcome back, ${loggedInClient.name}!\n\nYour personal client portal is active. If there are any outstanding telemetry documents needed (Driver's License, VIN Photo, EIN, Business Name), please upload them to finalize your quote estimate.`
             );
             
             updateStagingVaultUI();
@@ -611,8 +628,11 @@ function logoutClientPortal() {
     // Clear theme inversion
     document.body.classList.remove('inverted-client-portal');
     
-    // Hide header profile banner
-    document.getElementById('client-profile-header').style.display = 'none';
+    // Hide hamburger menu container and close dropdown
+    const hamburgerContainer = document.getElementById('portal-hamburger-container');
+    if (hamburgerContainer) hamburgerContainer.style.display = 'none';
+    const dropdown = document.getElementById('hamburger-dropdown');
+    if (dropdown) dropdown.classList.remove('active');
     
     // Show login trigger button
     document.getElementById('btn-portal-login-trigger').style.display = 'inline-flex';
@@ -643,7 +663,7 @@ async function updateTelemetryOnServer() {
             
             // Synchronize UI
             if (loggedInClient.businessName) {
-                const subTitle = document.getElementById('client-business-subtitle');
+                const subTitle = document.getElementById('hamburger-business-subtitle');
                 if (subTitle) {
                     subTitle.innerText = loggedInClient.businessName;
                     subTitle.style.display = 'block';
@@ -710,7 +730,7 @@ async function stageClientDocument(type) {
 function checkPhase2Completion() {
     if (vaultState.businessName && vaultState.ein && vaultState.driversLicense && vaultState.vin) {
         appendConsoleMessageUI('assistant', 
-            `🎉 Excellent news, ${loggedInClient.name}! All your documents and details have been successfully received and validated!\n\n**An agent will be in touch with you shortly after uploading the remaining documents.**`
+            `🎉 Excellent news, ${loggedInClient.name}! All your documents and details have been successfully received and validated!\n\nAn agent will be in touch with you shortly after uploading the remaining documents.`
         );
         chatStep = STEP.COMPLETE;
         saveToStorage();
@@ -746,14 +766,14 @@ function activateClientPortalTheme(client) {
     const trigger = document.getElementById('btn-portal-login-trigger');
     if (trigger) trigger.style.display = 'none';
     
-    // 3. Render dynamic profile header with the user's name
-    const profileHeader = document.getElementById('client-profile-header');
-    if (profileHeader) {
-        profileHeader.style.display = 'flex';
-        document.getElementById('client-welcome-name').innerText = `Welcome, ${client.name}`;
+    // 3. Render dynamic profile inside hamburger menu
+    const hamburgerContainer = document.getElementById('portal-hamburger-container');
+    if (hamburgerContainer) {
+        hamburgerContainer.style.display = 'block';
+        document.getElementById('hamburger-welcome-name').innerText = `Welcome, ${client.name}`;
         
         // Show business name under full name if set
-        const subTitle = document.getElementById('client-business-subtitle');
+        const subTitle = document.getElementById('hamburger-business-subtitle');
         if (client.businessName) {
             subTitle.innerText = client.businessName;
             subTitle.style.display = 'block';
@@ -1028,7 +1048,7 @@ function extractPhone(text) {
     return null;
 }
 function validateDateMDY(str) {
-    return /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{2}$/.test(str.trim());
+    return /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(str.trim());
 }
 
 // ─── PREMIUM CUSTOM WIDGET NOTIFICATIONS ──────────────────────────────────────
