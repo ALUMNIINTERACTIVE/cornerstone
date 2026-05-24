@@ -1400,7 +1400,10 @@
                 const totalCompleteness = clients.reduce((acc, client) => {
                     let completedCount = 0;
                     if (client.email) completedCount++;
-                    if (client.phone) completedCount++;
+                    
+                    const phoneVal = client.phone || (client.type === 'new_policy' ? client.details : null);
+                    if (phoneVal) completedCount++;
+                    
                     if (client.effectiveDate) completedCount++;
                     if (client.businessName) completedCount++;
                     if (client.ein) completedCount++;
@@ -1671,7 +1674,7 @@
                                 <div class="detail-label">Client Phone</div>
                                 <div class="detail-value">
                                     <i class="fa-solid fa-phone" style="color: var(--accent-purple-light); margin-right: 6px;"></i>
-                                    <a href="tel:${escapeHtml(submission.phone || '')}" style="color: inherit; text-decoration: underline;">${escapeHtml(submission.phone || 'N/A')}</a>
+                                    <a href="tel:${escapeHtml(submission.phone || (submission.type === 'new_policy' ? submission.details : ''))}" style="color: inherit; text-decoration: underline;">${escapeHtml(submission.phone || (submission.type === 'new_policy' ? submission.details : 'N/A'))}</a>
                                 </div>
                             </div>
                             <div class="detail-item">
