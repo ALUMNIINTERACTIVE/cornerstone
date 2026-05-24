@@ -2002,6 +2002,54 @@ footer {
     z-index: 101;
 }
 
+footer p {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.footer-portal-link {
+    color: var(--accent-purple) !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-luxury);
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(124, 58, 237, 0.06);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+}
+
+.footer-portal-link:hover {
+    background: var(--accent-purple) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-purple) !important;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+body.inverted-client-portal .footer-portal-link {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.inverted-client-portal .footer-portal-link:hover {
+    background: #ffffff !important;
+    color: #3b0764 !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
 /* Responsive Vault styles */
 @media (max-width: 900px) {
     .minimal-chat-layout .chat-console-container {

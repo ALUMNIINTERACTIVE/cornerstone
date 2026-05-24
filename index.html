@@ -38,22 +38,11 @@
                 <span class="slider round"></span>
             </label>
         </div>
-        <button type="button" class="btn-toggle-vault" id="btn-portal-login-trigger" onclick="openLoginOverlay()">
-            <i class="fa-solid fa-user-lock"></i> <span class="btn-text">Client Portal Login</span>
-        </button>
     </div>
 
     <!-- Compact Elegant Brand Header -->
     <header class="minimal-header">
         <div class="header-container">
-            <!-- Sidebar Open Trigger (Visible when sidebar is closed) -->
-            <button type="button" class="btn-sidebar-toggle btn-sidebar-toggle-closed" id="btn-sidebar-toggle-closed" onclick="toggleVault()" title="Open Sidebar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <line x1="9" y1="3" x2="9" y2="21" />
-                    <path d="M13 9l3 3-3 3" />
-                </svg>
-            </button>
             <div class="logo">
                 <i class="fa-solid fa-cube purple-glow"></i>
                 <h1>CORNERSTONE</h1>
@@ -113,127 +102,27 @@
                 </div>
             </div>
 
-            <!-- Left Side Collapsable Portal Sidebar -->
-            <div class="staging-vault-panel open" id="staging-vault-panel">
-                <div class="vault-header">
-                    <div class="vault-header-title">
-                        <i class="fa-solid fa-cube purple-glow"></i>
-                        <h3>Client Portal</h3>
-                    </div>
-                    <!-- Sidebar Close Trigger (Visible when sidebar is open) -->
-                    <button type="button" class="btn-sidebar-toggle btn-sidebar-toggle-open" id="btn-sidebar-toggle-open" onclick="toggleVault()" title="Collapse Sidebar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <line x1="9" y1="3" x2="9" y2="21" />
-                            <path d="M16 15l-3-3 3-3" />
-                        </svg>
-                    </button>
-                    <button type="button" class="btn-close-vault" onclick="toggleVault()">&times;</button>
-                </div>
-                <div class="vault-status-indicator">
-                    <span class="vault-led active"></span>
-                    <span class="vault-status-text">Active Secure Session</span>
-                </div>
-
-                <!-- Sidebar Navigation Menu -->
-                <div class="sidebar-nav-menu">
-                    <!-- Guest Menu Item -->
-                    <div class="sidebar-nav-item guest-only" onclick="openLoginOverlay()">
-                        <i class="fa-solid fa-user-lock"></i>
-                        <span>Client Portal</span>
-                    </div>
-                    
-                    <!-- Client Menu Items -->
-                    <div class="sidebar-nav-item client-only" onclick="document.getElementById('vault-fields-container').scrollIntoView({ behavior: 'smooth' })">
-                        <i class="fa-solid fa-folder-open"></i>
-                        <span>Documents</span>
-                    </div>
-                    <div class="sidebar-nav-item client-only" onclick="openProfileSettingsModal()">
-                        <i class="fa-solid fa-user-gear"></i>
-                        <span>Profile Settings</span>
-                    </div>
-                    <div class="sidebar-nav-item client-only logout-item" onclick="logoutClientPortal()">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Log Out</span>
-                    </div>
-                </div>
-
-                <div class="vault-fields" id="vault-fields-container">
-                    <div class="vault-field">
-                        <div class="vault-field-label">Portal Status</div>
-                        <div class="vault-field-value" id="vault-badge-type">Guest Intake</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label">Customer Name</div>
-                        <div class="vault-field-value unpopulated" id="vault-identity">Not Detected</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label">Email Address</div>
-                        <div class="vault-field-value unpopulated" id="vault-email">Not Detected</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label">Phone Number</div>
-                        <div class="vault-field-value unpopulated" id="vault-phone">Not Detected</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label" id="vault-scope-label">Dossier Details</div>
-                        <div class="vault-field-value unpopulated" id="vault-scope">Not Specified</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label">Staged Documents</div>
-                        <div class="vault-field-value unpopulated" id="vault-file">No files attached</div>
-                    </div>
-
-                    <div class="vault-field">
-                        <div class="vault-field-label">Request Statement</div>
-                        <div class="vault-field-value unpopulated" id="vault-details">Awaiting details in chat...</div>
-                    </div>
-                </div>
-
-                <div class="vault-actions" style="padding: 1.5rem 1.8rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
-                    <button type="button" class="btn-vault-submit" id="vault-submit-btn" onclick="submitStagedDossier()" disabled>
-                        <i class="fa-solid fa-lock"></i> Verify &amp; Submit Dossier
-                    </button>
-                    <!-- Client Portal Login button in the sidebar (primarily for mobile) -->
-                    <div class="vault-login-container" id="vault-sidebar-login-container" style="width: 100%;">
-                        <button type="button" class="btn-vault-login" onclick="openLoginOverlay()" style="width: 100%;">
-                            <i class="fa-solid fa-user-lock"></i> Client Portal Login
-                        </button>
-                    </div>
-                    <div class="vault-logout-container" id="vault-logout-container" style="display: none; width: 100%;">
-                        <button type="button" class="btn-vault-logout" onclick="logoutClientPortal()" style="width: 100%;">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection. | Designed by <a
+        <p>
+            &copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection. | Designed by <a
                 href="https://www.alumniinteractive.com" target="_blank"
-                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em;">ALUMNI
-                INTΞRACTIVΞ</a></p>
+                style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em; margin-right: 5px;">ALUMNI
+                INTΞRACTIVΞ</a>
+            <span class="footer-divider" style="color: var(--border-color); margin: 0 4px;">|</span>
+            <a href="#" id="btn-portal-login-trigger" class="footer-portal-link" onclick="openLoginOverlay(); return false;">
+                <i class="fa-solid fa-user-lock"></i> Client Portal Login
+            </a>
+            <a href="#" id="btn-portal-logout-trigger" class="footer-portal-link" onclick="logoutClientPortal(); return false;" style="display: none;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </p>
     </footer>
 
     <script src="script.js"></script>
     <script>
-        function toggleVault() {
-            const vault = document.getElementById('staging-vault-panel');
-            vault.classList.toggle('open');
-            if (vault.classList.contains('open')) {
-                document.body.classList.remove('sidebar-closed');
-            } else {
-                document.body.classList.add('sidebar-closed');
-            }
-        }
-
         // Drifting Purple Particles Canvas
         const canvas = document.getElementById('particle-canvas');
         if (canvas) {

@@ -681,11 +681,12 @@ function logoutClientPortal() {
     if (vault) vault.classList.remove('open');
     
     // Show login trigger button
-    document.getElementById('btn-portal-login-trigger').style.display = 'inline-flex';
-    
-    // Show sidebar login container in the sidebar
-    const sidebarLogin = document.getElementById('vault-sidebar-login-container');
-    if (sidebarLogin) sidebarLogin.style.display = 'block';
+    const loginTrigger = document.getElementById('btn-portal-login-trigger');
+    if (loginTrigger) loginTrigger.style.display = 'inline-flex';
+
+    // Hide logout trigger button
+    const logoutTrigger = document.getElementById('btn-portal-logout-trigger');
+    if (logoutTrigger) logoutTrigger.style.display = 'none';
     
     // Reset inputs
     resetConversation();
@@ -815,6 +816,10 @@ function activateClientPortalTheme(client) {
     // 2. Hide login trigger button
     const trigger = document.getElementById('btn-portal-login-trigger');
     if (trigger) trigger.style.display = 'none';
+
+    // 3. Show logout trigger button in footer
+    const logoutTrigger = document.getElementById('btn-portal-logout-trigger');
+    if (logoutTrigger) logoutTrigger.style.display = 'inline-flex';
 
     // 4. Show logout container in the sidebar
     const logoutContainer = document.getElementById('vault-logout-container');
