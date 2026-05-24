@@ -607,6 +607,18 @@ footer {
     color: var(--text-secondary);
     border-top: 1px solid var(--border-color);
     margin-top: 4rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Ensure footer is visible above browser bar on mobile */
+@media (max-width: 768px) {
+    footer {
+        height: var(--footer-height, 50px);
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+        align-items: flex-start !important;
+        padding-top: 12px !important;
+    }
 }
 
 footer p {
