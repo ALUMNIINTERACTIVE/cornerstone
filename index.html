@@ -11,10 +11,11 @@
     <!-- Apple Touch Icon & Favicon for Link Sharing Previews -->
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
-    
+
     <!-- Open Graph Link Sharing Metadata -->
     <meta property="og:title" content="Cornerstone Insurance Firm - Request for Quote">
-    <meta property="og:description" content="Secure, minimalist AI-first concierge portal. Request a tailored insurance quote in seconds.">
+    <meta property="og:description"
+        content="Secure, minimalist AI-first concierge portal. Request a tailored insurance quote in seconds.">
     <meta property="og:image" content="https://chatcif.com/og-image.png">
     <meta property="og:url" content="https://chatcif.com">
     <meta property="og:type" content="website">
@@ -39,7 +40,8 @@
             </label>
         </div>
         <!-- Client Logout Button (hidden by default, shown when logged in) -->
-        <button type="button" class="btn-toggle-vault" id="btn-portal-logout-trigger" onclick="logoutClientPortal()" style="display: none;">
+        <button type="button" class="btn-toggle-vault" id="btn-portal-logout-trigger" onclick="logoutClientPortal()"
+            style="display: none;">
             <i class="fa-solid fa-right-from-bracket"></i> <span class="btn-text">Logout</span>
         </button>
     </div>
@@ -48,7 +50,9 @@
     <header class="minimal-header">
         <div class="header-container">
             <div class="logo">
-                <a href="#" class="logo-cube-link" onclick="document.body.classList.contains('inverted-client-portal') ? showPortalNotification('✅ Client Portal active. You are securely logged in.') : openLoginOverlay(); return false;" title="Client Portal Login">
+                <a href="#" class="logo-cube-link"
+                    onclick="document.body.classList.contains('inverted-client-portal') ? showPortalNotification('✅ Client Portal active. You are securely logged in.') : openLoginOverlay(); return false;"
+                    title="Client Portal Login">
                     <i class="fa-solid fa-cube purple-glow"></i>
                 </a>
                 <h1>CORNERSTONE</h1>
@@ -58,7 +62,7 @@
     <!-- Main Content Area: Immersive Ultra-Minimalist Console -->
     <main>
         <div class="chat-console-container" id="contact-chat-console">
-            
+
             <!-- Immersive Central Content Wrapper -->
             <div class="minimal-chat-core">
 
@@ -76,8 +80,7 @@
                 <div id="console-staged-file-bubble" class="staged-file-bubble hidden">
                     <i class="fa-solid fa-file-image"></i>
                     <span id="console-staged-file-name"></span>
-                    <button type="button" class="btn-clear-staged"
-                        onclick="clearConsoleStagedFile()">&times;</button>
+                    <button type="button" class="btn-clear-staged" onclick="clearConsoleStagedFile()">&times;</button>
                 </div>
 
                 <!-- Modern Pill Search-Bar Input -->
@@ -89,22 +92,21 @@
                             title="Attach document image">
                             <i class="fa-solid fa-plus"></i>
                         </button>
-                        
-                        <input type="text" id="console-chat-input-field"
-                            placeholder="Ask anything"
+
+                        <input type="text" id="console-chat-input-field" placeholder="Ask anything"
                             onkeydown="if(event.key === 'Enter') sendConsoleChatMessage()">
-                        
+
                         <!-- Send Button inside Solid Circle (Matches send arrow in second photo) -->
-                        <button type="button" class="btn-mic" onclick="alert('Voice recognition is initializing...')" title="Voice Search">
+                        <button type="button" class="btn-mic" onclick="alert('Voice recognition is initializing...')"
+                            title="Voice Search">
                             <i class="fa-solid fa-microphone"></i>
                         </button>
-                        <button type="button" class="btn-send" onclick="sendConsoleChatMessage()"
-                            title="Send message">
+                        <button type="button" class="btn-send" onclick="sendConsoleChatMessage()" title="Send message">
                             <i class="fa-solid fa-arrow-up"></i>
                         </button>
                     </div>
-                    <input type="file" id="console-file-input" name="document" accept="image/*"
-                        style="display: none;" onchange="handleConsoleFileSelect(event)">
+                    <input type="file" id="console-file-input" name="document" accept="image/*" style="display: none;"
+                        onchange="handleConsoleFileSelect(event)">
                 </div>
             </div>
 
@@ -113,7 +115,7 @@
 
     <footer>
         <p>
-            &copy; 2026 Cornerstone Insurance Firm. All rights reserved. Registered L1 Protection. | Designed by <a
+            &copy; 2026 Cornerstone Insurance Firm. All rights reserved.| Designed by <a
                 href="https://www.alumniinteractive.com" target="_blank"
                 style="color: var(--accent-purple-light); text-decoration: none; font-weight: 800; font-family: 'Montserrat', 'Inter', sans-serif; letter-spacing: 0.1em;">ALUMNI
                 INTΞRACTIVΞ</a>
@@ -195,14 +197,19 @@
         <!-- Card 1: Email 6-Digit Code Verification Screen -->
         <div id="auth-card-verify" class="auth-card">
             <h3>Security Verification</h3>
-            <p>We have dispatched a real 6-digit verification code to your email address: <strong id="verify-email-display">your@email.com</strong>.</p>
-            <p style="font-size: 0.8rem; color: #a78bfa;">Please check your inbox (or spam) and enter it below to authorize this secure quote request.</p>
+            <p>We have dispatched a real 6-digit verification code to your email address: <strong
+                    id="verify-email-display">your@email.com</strong>.</p>
+            <p style="font-size: 0.8rem; color: #a78bfa;">Please check your inbox (or spam) and enter it below to
+                authorize this secure quote request.</p>
             <div class="auth-form-group">
                 <label for="verification-code-input">6-Digit Code</label>
-                <input type="text" id="verification-code-input" placeholder="000000" maxlength="6" style="text-align: center; letter-spacing: 0.3em; font-weight: bold;">
+                <input type="text" id="verification-code-input" placeholder="000000" maxlength="6"
+                    style="text-align: center; letter-spacing: 0.3em; font-weight: bold;">
             </div>
-            <div id="verify-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Incorrect verification code. Please try again.</div>
-            <button type="button" class="btn-auth-submit" onclick="submitEmailVerificationCode()">Verify Email Code</button>
+            <div id="verify-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">
+                Incorrect verification code. Please try again.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitEmailVerificationCode()">Verify Email
+                Code</button>
             <div class="auth-switch">
                 Didn't receive it? <a href="#" onclick="resendVerificationCode(); return false;">Resend Code</a>
             </div>
@@ -211,13 +218,16 @@
         <!-- Card 2: Password Setup Screen -->
         <div id="auth-card-password" class="auth-card">
             <h3>Secure Password Setup</h3>
-            <p>Set a secure password associated with your email to access your inverted client portal, upload documents, and check quote telemetry in the future.</p>
+            <p>Set a secure password associated with your email to access your inverted client portal, upload documents,
+                and check quote telemetry in the future.</p>
             <div class="auth-form-group">
                 <label for="setup-password-input">Password (Min 6 chars)</label>
                 <input type="password" id="setup-password-input" placeholder="••••••••">
             </div>
-            <div id="password-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Password must be at least 6 characters long.</div>
-            <button type="button" class="btn-auth-submit" onclick="submitPasswordSetup()">Activate Client Account</button>
+            <div id="password-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">
+                Password must be at least 6 characters long.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitPasswordSetup()">Activate Client
+                Account</button>
         </div>
 
         <!-- Card 3: Login Screen -->
@@ -232,8 +242,10 @@
                 <label for="login-password-input">Password</label>
                 <input type="password" id="login-password-input" placeholder="••••••••">
             </div>
-            <div id="login-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">Invalid email or password. Please try again.</div>
-            <button type="button" class="btn-auth-submit" onclick="submitClientLogin()">Authorize &amp; Access Portal</button>
+            <div id="login-error-msg" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;">
+                Invalid email or password. Please try again.</div>
+            <button type="button" class="btn-auth-submit" onclick="submitClientLogin()">Authorize &amp; Access
+                Portal</button>
             <div class="auth-switch">
                 Need a quote? <a href="#" onclick="closeAuthOverlay(); return false;">Start Intake</a>
             </div>
@@ -243,14 +255,16 @@
         <div id="auth-card-profile" class="auth-card">
             <h3>Profile Settings</h3>
             <p>Manage your secure Cornerstone profile details.</p>
-            <form id="profile-settings-form" onsubmit="saveProfileSettings(event)" style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 1rem;">
+            <form id="profile-settings-form" onsubmit="saveProfileSettings(event)"
+                style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 1rem;">
                 <div class="auth-form-group">
                     <label for="profile-name-input">Full Name</label>
                     <input type="text" id="profile-name-input" required>
                 </div>
                 <div class="auth-form-group">
                     <label for="profile-email-input">Email Address</label>
-                    <input type="email" id="profile-email-input" readonly style="opacity: 0.6; cursor: not-allowed; background: rgba(255,255,255,0.05);">
+                    <input type="email" id="profile-email-input" readonly
+                        style="opacity: 0.6; cursor: not-allowed; background: rgba(255,255,255,0.05);">
                 </div>
                 <div class="auth-form-group">
                     <label for="profile-phone-input">Phone Number</label>
@@ -274,4 +288,5 @@
         </div>
     </div>
 </body>
+
 </html>
